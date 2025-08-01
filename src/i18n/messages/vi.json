@@ -1,7 +1,12 @@
 {
   "HomePage": {
-    "title": "Xin chaoo!",
-    "about": "Di toi trang about"
+    "title": "Wishzy - Tìm khóa học, luyện đề thi trực tuyến!",
+    "Navigation": {
+      "home": "Trang chủ",
+      "courses": "Khóa học",
+      "categories": "Danh mục",
+      "practice": "Luyện đề"
+    }
   }
 }
 

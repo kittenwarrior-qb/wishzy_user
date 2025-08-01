@@ -1,6 +1,11 @@
 {
   "HomePage": {
-    "title": "Hello world!",
-    "about": "Go to the about page"
+    "title": "Wishzy - Find courses, practice exams online!",
+    "Navigation": {
+      "home": "Home",
+      "courses": "Course",
+      "categories": "Category",
+      "practice": "Exam"
+    }
   }
 }
