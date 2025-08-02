@@ -3,7 +3,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
 export const SubjectService = {
-    getGrades: async():Promise<subjectResponse> => {
+    getSubject: async():Promise<subjectResponse> => {
         try {
             const res = await fetch(`${apiUrl}/subject`, {
                 method: "GET",

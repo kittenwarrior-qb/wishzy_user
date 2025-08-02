@@ -8,13 +8,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import banner_img from '@/assets/bannerpng.png'
 const images = [
-  'https://placehold.co/1280x400',
-  'https://placehold.co/1280x400',
-  'https://placehold.co/1280x400',
+  'https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif',
+  'https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif',
+  'https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif',
 ]
 
 const BannerSection = () => {
@@ -23,11 +21,13 @@ const BannerSection = () => {
       <Carousel className="w-full h-full">
         <CarouselContent>
           {images.map((src, index) => (
-            <CarouselItem key={index} className="w-full h-full">
+            <CarouselItem key={index} className="w-full h-[400px] flex items-center justify-center">
               <Image
-                src={banner_img}
+                src={src}
                 alt={`Banner ${index + 1}`}
-                className="w-full h-full object-cover"
+                className="object-cover object-center w-full h-full"
+                width={1200}
+                height={400}
               />
             </CarouselItem>
           ))}
