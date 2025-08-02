@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { GradeService } from '@/services/grade.service'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { Grade } from '@/types/models/grade'
+import type { Grade } from '@/types/schema/grade.schema'
 
 
 const SubHeader = () => {
@@ -27,13 +27,13 @@ const SubHeader = () => {
   }, [])
 
   return (
-    <div className="hidden lg:flex min-h-[40px] justify-center items-center gap-6 bg-white">
+    <div className="hidden lg:flex min-h-[40px] justify-center items-center gap-6 ">
       {loading
         ? Array.from({ length: 10 }).map((_, i) => (
             <Skeleton key={i} className="h-6 w-15 rounded-md gap-6" />
           ))
         : grades.map((grade) => (
-            <span className="text-[14px] font-medium text-gray-700" key={grade._id}>
+            <span className="text-[14px] font-medium text-base-content " key={grade._id}>
               {grade.gradeName}
             </span>
           ))}
