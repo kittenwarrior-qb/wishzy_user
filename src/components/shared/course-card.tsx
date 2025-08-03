@@ -6,10 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { Course } from "@/types/models/course";
+import { CourseDetail } from "@/types/schema/course.schema";
 import { useLocale } from "next-intl";
 
-const CourseCard = ({ course }: { course: Course }) => {
+const CourseCard = ({ course }: { course: CourseDetail }) => {
   const {
     courseName,
     description,
@@ -28,7 +28,7 @@ const CourseCard = ({ course }: { course: Course }) => {
   // const locale = useLocale(); 
 
   return (
-    <Card className="w-[300px] rounded-lg overflow-hidden border border-gray-200">
+    <Card className="w-[300px] rounded-lg overflow-hidden border ">
       <Link href={`/course/${slug}`}>
         <div className="relative w-full h-[185px] bg-muted">
           <Image
@@ -64,7 +64,7 @@ const CourseCard = ({ course }: { course: Course }) => {
           <div className="flex items-center gap-[7px]">
             <Avatar className="w-6 h-6 bg-neutral-200" />
             <span className="text-muted-foreground text-sm">
-              {createdBy?.name || "Tác giả"}
+              {createdBy.fullName || "Tác giả"}
             </span>
           </div>
           <span className="text-muted-foreground text-sm">{publishedDate}</span>

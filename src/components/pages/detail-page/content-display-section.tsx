@@ -55,7 +55,7 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
     <div className="flex w-full items-start justify-between gap-6">
       {/* Left side */}
       <div className="flex flex-col w-full max-w-[800px] gap-6">
-        <div className="w-full h-[400px] rounded-[16px] overflow-hidden">
+        <div className="w-full h-[400px] rounded-[16px] overflow-hidden border">
           <Image
             src={
               course.thumbnail ||
@@ -68,8 +68,8 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
           />
         </div>
 
-        <Tabs defaultValue="info">
-          <TabsList className="w-full justify-start gap-6">
+        <Tabs defaultValue="info" className="rounded-[16px]">
+          <TabsList className="w-full justify-start gap-6 border">
             {tabsData.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value}>
                 {tab.label}
@@ -81,10 +81,10 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
             {/* Mô tả */}
             <section>
               <h3 className="text-lg font-semibold">Mô tả</h3>
-              <p className="text-base text-black leading-6 whitespace-pre-line">
+              <p className="text-base leading-6 whitespace-pre-line">
                 {course.description || "Chưa có mô tả cho khóa học này."}
               </p>
-              <Button className="text-[#e78d22] text-base font-semibold gap-1 mt-2">
+              <Button className="text-base font-semibold gap-1 mt-2">
                 Hiện thêm <ChevronDown className="w-4 h-4" />
               </Button>
             </section>
@@ -92,19 +92,17 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
             {/* Yêu cầu */}
             <section>
               <h3 className="text-lg font-semibold">Yêu cầu</h3>
-              {/* <p className="text-base text-black leading-6 whitespace-pre-line">
-                {course.requirements.length > 0
+              <p className="text-base leading-6 whitespace-pre-line">
+                {course.requirements?.length
                   ? course.requirements.join("\n")
                   : "- Có thiết bị kết nối Internet\n- Tinh thần tự học"}
-              </p> */}
+              </p>
             </section>
 
             {/* Nội dung */}
             <section>
               <h3 className="text-lg font-semibold">Nội dung khóa học</h3>
-              <p className="text-sm text-gray-500">
-                Nội dung đang được cập nhật.
-              </p>
+              <p className="text-sm">Nội dung đang được cập nhật.</p>
             </section>
           </TabsContent>
         </Tabs>
@@ -115,13 +113,13 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
             <h3 className="text-lg font-semibold">Giảng viên</h3>
             <div className="flex items-center gap-6">
               <Avatar className="w-[123px] h-[123px]">
-                <AvatarFallback className="bg-gray-300 text-lg">GV</AvatarFallback>
+                <AvatarFallback className="text-lg">GV</AvatarFallback>
               </Avatar>
               <div className="space-y-2">
                 <h4 className="font-semibold text-base">
                   {course.createdBy?.fullName ?? "Giảng viên chưa cập nhật"}
                 </h4>
-                <p className="text-sm text-gray-500">Giáo viên bộ môn</p>
+                <p className="text-sm">Giáo viên bộ môn</p>
                 <ul className="space-y-1">
                   {instructorStats.map((stat, index) => (
                     <li key={index} className="flex items-center gap-2">
@@ -145,26 +143,26 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
       </div>
 
       {/* Right sidebar */}
-      <Card className="w-[450px] p-6 rounded-[15px] border">
+      <Card className="w-[450px] p-6 rounded-[16px] border">
         <CardContent className="space-y-6">
           <div className="space-y-1">
-            <div className="text-2xl font-bold text-black">
-              {course.price.toLocaleString()}đ
+            <div className="text-2xl font-bold">
+              {course.price.toLocaleString('vi-VN')}đ
             </div>
           </div>
 
           <div className="space-y-2">
-            <Button variant="outline" className="w-full border-blue-600 text-blue-600">
+            <Button variant="outline" className="w-full">
               Thêm vào giỏ hàng
             </Button>
-            <Button className="w-full bg-blue-600 text-white">Mua ngay</Button>
+            <Button className="w-full">Mua ngay</Button>
           </div>
 
           <div className="space-y-3">
             {courseFeatures.map((feature, index) => (
               <div key={index} className="flex items-center gap-4">
-                <feature.icon className="w-5 h-5 text-gray-700" />
-                <span className="text-base text-gray-800">{feature.text}</span>
+                <feature.icon className="w-5 h-5" />
+                <span className="text-base">{feature.text}</span>
               </div>
             ))}
           </div>

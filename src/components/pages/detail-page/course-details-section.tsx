@@ -2,9 +2,15 @@
 
 import { Calendar, Eye, Heart, Share2, Star } from "lucide-react";
 import React from "react";
-import { Course } from "@/types/models/course";
-
-export const CourseDetailsSection = ({ course }: { course: Course }) => {
+import { CourseDetail } from "@/types/schema/course.schema";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"; 
+export const CourseDetailsSection = ({ course }: { course: CourseDetail }) => {
   const courseStats = [
     {
       icon: Eye,
@@ -20,22 +26,40 @@ export const CourseDetailsSection = ({ course }: { course: Course }) => {
 
   return (
     <div className="flex flex-col items-start gap-2.5 w-full">
-      <div className="text-base text-[#1b1b1be6]">
-        {course.subject?.subjectName ?? "Danh mục chưa có"}
+      <div className="pb-4 my-3">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href={`/subjects/${course.subject?.slug}`}>
+              {course.subject?.subjectName || "Danh mục"}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="#" aria-current="page">
+              {course.courseName}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       </div>
 
-      <h1 className="text-[32px] font-bold text-black leading-[42px]">
+      <h1 className="text-[32px] font-bold leading-[42px]">
         {course.courseName}
       </h1>
 
       <div className="flex items-center gap-2.5">
-        <div className="text-base text-black">
+        <div className="text-base">
           {course.createdBy?.fullName ?? "Giảng viên chưa cập nhật"}
         </div>
 
-        <div className="flex items-center gap-1 text-yellow-400">
-          <Star className="w-4 h-4 fill-yellow-400" />
-          <span className="text-xs text-[#777]">
+        <div className="flex items-center gap-1">
+          <Star className="w-4 h-4 fill-current text-yellow-400" />
+          <span className="text-xs">
             ({course.rating ?? 0})
           </span>
         </div>
@@ -48,7 +72,7 @@ export const CourseDetailsSection = ({ course }: { course: Course }) => {
             return (
               <div key={index} className="flex items-center gap-2 w-[140px]">
                 <Icon className="w-6 h-6" />
-                <span className="text-sm text-black">{stat.text}</span>
+                <span className="text-sm">{stat.text}</span>
               </div>
             );
           })}

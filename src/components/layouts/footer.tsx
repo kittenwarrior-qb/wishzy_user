@@ -2,9 +2,9 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <footer className='flex justify-center items-center text-center bg-gray-200 p-4'>
+    <footer className='flex justify-center items-center bg-secondary/80 text-center p-4'>
       <div>
-        <p>footer ne</p>
+        <p className='text-secondary-content'>footer ne</p>
       </div>
     </footer>
   )
