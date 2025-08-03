@@ -1,7 +1,7 @@
 import z from "zod";
 import { msgSchema } from "./base.schema";
 
-export const loginSuccessSchema = msgSchema.extend({
+export const loginSuccessResponseSchema = msgSchema.extend({
   accessToken: z.string(),
   user: z.object({
     _id: z.string(),
@@ -18,6 +18,11 @@ export const loginFormSchema = z.object({
     .min(3, "Mật khẩu phải ít nhất 6 ký tự"),
 });
 
-export const loginResponseSchema = z.union([msgSchema, loginSuccessSchema]);
+export const loginResponseSchema = z.union([
+  msgSchema,
+  loginSuccessResponseSchema,
+]);
 
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
+
+export type RegisterResponse = z.infer<typeof msgSchema>;
