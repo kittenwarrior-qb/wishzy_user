@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { getTranslations } from "next-intl/server";
 import { Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
+import Transition from "@/components/shared/transitions";
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -35,8 +36,10 @@ export default function RootLayout({
   return (
     <html lang="vi" data-theme="wishzy" suppressHydrationWarning>
       <body className={`${beVietnamPro.variable} antialiased`}>
-        {children}
-        <Toaster position="top-right" richColors />
+        <Transition>
+          {children}
+          <Toaster position="top-right" richColors />
+        </Transition>
       </body>
     </html>
   );
