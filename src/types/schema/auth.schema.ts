@@ -12,11 +12,27 @@ export const loginSuccessResponseSchema = msgSchema.extend({
 });
 
 export const loginFormSchema = z.object({
-  email: z.string("Vui lòng không bỏ trống email").email("Email không hợp lệ"),
+  email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
   password: z
-    .string("Vui lòng không bỏ trống mật khẩu")
-    .min(3, "Mật khẩu phải ít nhất 6 ký tự"),
+    .string()
+    .min(1, "Vui lòng nhập mật khẩu")
+    .min(3, "Mật khẩu phải ít nhất 3 ký tự"),
 });
+
+export const registerFormSchema = z
+  .object({
+    fullName: z.string("Vui lòng nhập họ tên").min(1, "Vui lòng nhập họ tên"),
+    email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
+    password: z
+      .string()
+      .min(1, "Vui lòng nhập mật khẩu")
+      .min(3, "Mật khẩu phải ít nhất 3 ký tự"),
+    "confirm-password": z.string("Vui lòng xác nhận mật khẩu"),
+  })
+  .refine((data) => data.password === data["confirm-password"], {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirm-password"],
+  });
 
 export const loginResponseSchema = z.union([
   msgSchema,

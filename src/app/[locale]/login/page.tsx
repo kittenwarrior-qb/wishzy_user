@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Form,
   FormControl,
@@ -38,6 +38,7 @@ const items: {
 ];
 
 const LoginPage = () => {
+  const [isLoading, setIsLoadind] = useState<boolean>(false);
   const { setAuth } = useAuthStore();
   const router = useRouter();
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -49,6 +50,7 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
+    setIsLoadind(true);
     try {
       const res = await AuthService.login(data);
       if ("accessToken" in res && "user" in res) {
@@ -68,6 +70,8 @@ const LoginPage = () => {
         duration: 2000,
         className: "mt-8",
       });
+    } finally {
+      setIsLoadind(false);
     }
   };
 
