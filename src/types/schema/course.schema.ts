@@ -24,6 +24,7 @@ export const courseListSchema = z.object({
     fullName: z.string()
   }),
   createdAt: z.string(),
+  updatedAt: z.string().optional(),
   slug: z.string()
 });
 
@@ -40,21 +41,20 @@ export const courseDetailSchema = z.object({
   requirements: z.array(z.string()).optional(),
   totalDuration: z.number(),
   subject: z.object({
-    _id: z.string(),
+    _id: z.string().optional(),
     subjectName: z.string(),
     grade: z.object({
       _id: z.string(),
       gradeName: z.string()
-    }),
+    }).optional(),
     slug: z.string()
   }),
   createdBy: z.object({
-    _id: z.string(),
+    _id: z.string().optional(),
     email: z.string(),
     fullName: z.string()
   }),
   createdAt: z.string(),
-  updatedAt: z.string(),
   slug: z.string()
 });
 

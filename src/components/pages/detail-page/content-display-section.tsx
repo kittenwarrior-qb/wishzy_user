@@ -113,7 +113,7 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
             <h3 className="text-lg font-semibold">Giảng viên</h3>
             <div className="flex items-center gap-6">
               <Avatar className="w-[123px] h-[123px]">
-                <AvatarFallback className="text-lg">GV</AvatarFallback>
+                <AvatarFallback className="text-lg border">GV</AvatarFallback>
               </Avatar>
               <div className="space-y-2">
                 <h4 className="font-semibold text-base">
@@ -143,7 +143,7 @@ export default function ContentDisplaySection({ course }: { course: CourseDetail
       </div>
 
       {/* Right sidebar */}
-      <Card className="w-[450px] p-6 rounded-[16px] border">
+      <Card className="w-[450px] p-6 rounded-[16px] sticky top-[150px] border">
         <CardContent className="space-y-6">
           <div className="space-y-1">
             <div className="text-2xl font-bold">
