@@ -1,7 +1,11 @@
+
+
 import type { Metadata } from "next";
 import { getTranslations } from 'next-intl/server'
 import { Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
+import Transition from "@/components/shared/transitions";
+
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -31,10 +35,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="vi" data-theme="wishzy" suppressHydrationWarning>
-    <body className={`${beVietnamPro.variable} antialiased`}>
-      {children}
-    </body> 
-  </html>
+    <html lang="vi" data-theme="wishzy" suppressHydrationWarning>
+      <body className={`${beVietnamPro.variable} antialiased`}>
+        <Transition>{children}</Transition>
+      </body> 
+    </html>
   );
 }

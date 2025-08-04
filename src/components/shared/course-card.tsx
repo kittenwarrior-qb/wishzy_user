@@ -7,6 +7,7 @@ import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { CourseDetail } from "@/types/schema/course.schema";
+import { AnimatedLink } from "./animated-link";
 import { useLocale } from "next-intl";
 
 const CourseCard = ({ course }: { course: CourseDetail }) => {
@@ -29,7 +30,7 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
 
   return (
     <Card className="w-[300px] rounded-lg overflow-hidden border ">
-      <Link href={`/course/${slug}`}>
+      <AnimatedLink href={`/course/${slug}`}>
         <div className="relative w-full h-[185px] bg-muted">
           <Image
             src={thumbnail || "https://res.cloudinary.com/djuksxdrw/image/upload/v1754109827/cardpng_nzmt5j.png"}
@@ -57,7 +58,7 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
             <span className="text-muted-foreground text-xs">({ratingCount})</span>
           </div>
         </div>
-      </Link>
+      </AnimatedLink>
 
       <CardContent className="flex flex-col gap-[15px] p-3">
         <div className="flex items-center justify-between w-full">
@@ -70,11 +71,11 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
           <span className="text-muted-foreground text-sm">{publishedDate}</span>
         </div>
 
-        <Link href={`course/${slug}`}>
+        <AnimatedLink href={`course/${slug}`}>
           <h3 className="font-semibold text-foreground text-base leading-6 line-clamp-2 min-h-[35px] hover:underline">
             {courseName}
           </h3>
-        </Link>
+        </AnimatedLink>
 
         <p className="text-sm leading-[21px]">
           <span className="text-foreground line-clamp-3 block h-[63px]">
