@@ -87,7 +87,7 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
           <span className="font-medium text-foreground text-sm">
             {price.toLocaleString("vi-VN")} đ
           </span>
-          <Button variant="default">
+          <Button variant="outline">
             <span className="text-foreground text-sm">Thêm vào giỏ hàng</span>
           </Button>
         </div>

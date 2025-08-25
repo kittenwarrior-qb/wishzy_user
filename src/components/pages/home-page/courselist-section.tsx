@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import CourseCard from '@/components/shared/course-card';
 import { CourseService } from '@/services/course.service';
 import { Skeleton } from '@/components/ui/skeleton'
-import { Course } from '@/types/models/course';
+import { CourseList } from '@/types/schema/course.schema';
 
-const CourselistSection = ({ courseList }: {courseList: Course[]}) => {
-  const [course, setCourse] = useState<Course[]>([])
+const CourselistSection = ({ courseList }: {courseList: CourseList[]}) => {
+  const [course, setCourse] = useState<CourseList[]>([])
   const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const CourselistSection = ({ courseList }: {courseList: Course[]}) => {
     }, [])
 
   return (
-    <div className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+    <div className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 ">
       {course.map((c) => (
         <CourseCard key={c._id} course={c} />
       ))}
