@@ -7,6 +7,8 @@ import {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+// const apiUrl = "http://localhost:8000/api";
+
 export const CourseService = {
   getHotCourse: async (): Promise<CourseListResponse> => {
     const res = await fetch(`${apiUrl}/course/hot-course`, {
@@ -35,6 +37,7 @@ export const CourseService = {
   },
 
   getCourseBySlug: async (slug: string): Promise<CourseDetailResponse> => {
+    debugger
     const res = await fetch(`${apiUrl}/course/${slug}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
