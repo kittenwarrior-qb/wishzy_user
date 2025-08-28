@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 interface AboutSectionProps {
@@ -13,6 +14,9 @@ const AboutSection = ({ description }: AboutSectionProps) => {
       <div className="prose max-w-none">
         <p className="whitespace-pre-line">{description}</p>
       </div>
+      <Button className="text-base font-semibold gap-1 mt-2">
+        Đăng Ký  
+      </Button>
     </div>
   );
 };

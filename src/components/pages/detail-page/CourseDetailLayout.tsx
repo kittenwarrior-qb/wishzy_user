@@ -8,20 +8,34 @@ import ReviewsSection from "./ReviewSection";
 import AboutSection from "./AboutSection";
 import NearbyLocationsSection from "./RelatedCoursesSection";
 import { CourseDetail } from "@/types/schema/course.schema";
+// import CourseDetailPage from "@/app/[locale]/course/[slug]/page";
+
+// import ContentDisplaySection from "./content-display-section";
 
 const CourseDetailLayout = ({ course }: { course: CourseDetail }) => {
   return (
-    <div className="w-full bg-white shadow-md">
+    <div className="w-full max-w-[1280px] mx-auto p-4 md:p-8">
       <CourseHeader course={course} />
       <ServicesSection services={course.modules} />
-      <StaffSection instructors={course.instructors} />
+      <div className="flex flex-col md:flex-row gap-8 w-full max-w-[1280px] mx-auto p-4 md:p-8">
+        <div className="w-full md:w-2/3">
+            <AboutSection description={course.description} />
+        </div>
+        <div className="w-full md:w-1/3">
+         
+          <StaffSection  />
+        </div>
+      </div>
+    
+      {/* <CourseDetailPage /> */}
       <ReviewsSection 
         reviews={course.reviews} 
         rating={course.rating} 
         totalReviews={course.totalReviews} 
       />
-      <AboutSection description={course.description} />
+     
       <NearbyLocationsSection relatedCourses={course.relatedCourses} />
+      {/* <ContentDisplaySection course={course} /> */}
     </div>
   );
 };

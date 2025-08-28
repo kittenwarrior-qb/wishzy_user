@@ -58,7 +58,7 @@ import CourseDetailLayout from "../../../../components/pages/detail-page/CourseD
 import { CourseDetail } from "@/types/schema/course.schema";
 
 const CourseDetailPage = () => {
-  // Dữ liệu mẫu cho khóa học - trong thực tế sẽ lấy từ API
+
   const courseData: CourseDetail = {
     id: "1",
     name: "Lập trình Web Chuyên Sâu",
@@ -116,18 +116,18 @@ Sau khi hoàn thành khóa học, bạn sẽ có đủ kỹ năng để ứng tu
         specialty: "Frontend Developer",
         avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
       },
-      { 
-        id: "2", 
-        name: "Huỳnh Đông Quân", 
-        specialty: "Backend Developer",
-        avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
-      },
-      { 
-        id: "3", 
-        name: "Lê Thị Phương Hoài", 
-        specialty: "Fullstack Developer",
-        avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
-      }
+      // { 
+      //   id: "2", 
+      //   name: "Huỳnh Đông Quân", 
+      //   specialty: "Backend Developer",
+      //   avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
+      // },
+      // { 
+      //   id: "3", 
+      //   name: "Lê Thị Phương Hoài", 
+      //   specialty: "Fullstack Developer",
+      //   avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
+      // }
     ],
     reviews: [
       {
@@ -160,7 +160,12 @@ Sau khi hoàn thành khóa học, bạn sẽ có đủ kỹ năng để ứng tu
         id: "3",
         name: "Cloud Computing với AWS",
         info: "Cùng chủ đề • 40 giờ học"
-      }
+      },
+        {
+        id: "4",
+        name: "React Native Mobile Development",
+        info: "Cùng giảng viên • 45 giờ học"
+      },
     ]
   };
 
