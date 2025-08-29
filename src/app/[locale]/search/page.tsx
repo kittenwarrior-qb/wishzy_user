@@ -120,26 +120,28 @@ const courses: CourseList[] = [
 
 const SearchPage = () => {
   return (
-    <div className="min-h-[650px] py-8">
-      <div className="max-w-[1280px] mx-auto flex flex-col">
+    <div className="min-h-[650px] py-8 px-4 xl:px-0">
+      <div className="max-w-[1280px] mx-auto">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>Tìm kiếm sản phẩm</BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>Keyword</BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <div>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>Tìm kiếm sản phẩm</BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>Keyword</BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-        <div>
-          <FilterSection />
-          <div className="flex-1 grid grid-cols-4 gap-5">
+          <div>
+            <FilterSection />
+          </div>
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
             {courses.map((course) => (
-              <CourseCard key={course._id} course={course} />
+              <div key={course._id} className="mx-auto">
+                <CourseCard course={course} />
+              </div>
             ))}
           </div>
         </div>

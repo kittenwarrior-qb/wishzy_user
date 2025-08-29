@@ -23,39 +23,7 @@ import { ListFilter, ShieldQuestionMark, Unlink2 } from "lucide-react";
 const FilterSection = () => {
   return (
     <nav className="mt-4 mb-6 flex justify-between">
-      <div className="flex gap-3">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">
-              <ListFilter /> Tất cả bộ lọc
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="bg-white">
-            <SheetHeader>
-              <SheetTitle>Edit profile</SheetTitle>
-              <SheetDescription>
-                Make changes to your profile here. Click save when you&apos;re
-                done.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid flex-1 auto-rows-min gap-6 px-4">
-              <div className="grid gap-3">
-                <Label htmlFor="sheet-demo-name">Name</Label>
-                <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="sheet-demo-username">Username</Label>
-                <Input id="sheet-demo-username" defaultValue="@peduarte" />
-              </div>
-            </div>
-            <SheetFooter>
-              <Button type="submit">Save changes</Button>
-              <SheetClose asChild>
-                <Button variant="outline">Close</Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+      <div className="hidden md:flex gap-3">
         <Button variant={"outline"}>
           <ShieldQuestionMark />
           Bài học
@@ -86,15 +54,49 @@ const FilterSection = () => {
           </SelectContent>
         </Select>
       </div>
+
+      <div className="md:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="flex">
+              <ListFilter className="mr-1" /> Tất cả bộ lọc
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="bg-white">
+            <SheetHeader>
+              <SheetTitle>Bộ lọc</SheetTitle>
+              <SheetDescription>
+                Chọn điều kiện lọc mà bạn muốn
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid flex-1 auto-rows-min gap-6 px-4">
+              <div className="grid gap-3">
+                <Label htmlFor="sheet-demo-name">Name</Label>
+                <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="sheet-demo-username">Username</Label>
+                <Input id="sheet-demo-username" defaultValue="@peduarte" />
+              </div>
+            </div>
+            <SheetFooter>
+              <Button type="submit">Save changes</Button>
+              <SheetClose asChild>
+                <Button variant="outline">Close</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      </div>
       <Select>
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Lọc theo" />
         </SelectTrigger>
         <SelectContent className="bg-white">
-          <SelectItem value="system">Mới nhất</SelectItem>
-          <SelectItem value="light">Giá thấp đến cao</SelectItem>
-          <SelectItem value="dark">Giá cao đến thấp</SelectItem>
-          <SelectItem value="system">Lượt mua nhiều nhất</SelectItem>
+          <SelectItem value="new">Mới nhất</SelectItem>
+          <SelectItem value="low">Giá thấp đến cao</SelectItem>
+          <SelectItem value="high">Giá cao đến thấp</SelectItem>
+          <SelectItem value="sell">Lượt mua nhiều nhất</SelectItem>
         </SelectContent>
       </Select>
     </nav>
