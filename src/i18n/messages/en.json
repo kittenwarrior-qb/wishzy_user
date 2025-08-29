@@ -1,4 +1,7 @@
 {
+  "Header": {
+    
+  },
   "HomePage": {
     "title": "Wishzy - Find courses, practice exams online!",
     "description": "Khám phá hàng triệu khóa học trực tuyến và luyện đề thi miễn phí. Nâng cao kỹ năng của bạn với Wishzy ngay hôm nay!",
@@ -7,6 +10,17 @@
       "courses": "Course",
       "categories": "Category",
       "practice": "Exam"
+    },
+    "HotListSection": {
+      "name": "Courses and Certificates",
+      "title": "Featured on Wishzy",
+      "description": "Explore the most popular courses, suitable for all levels",
+      "showMore": "Show more",
+      "viewAll": "View all"
     }
+  },
+  "AboutPage": {
+    "title": "Wishzy - Find courses, practice exams online!",
+    "description": "Khám phá hàng triệu khóa học trực tuyến và luyện đề thi miễn phí. Nâng cao kỹ năng của bạn với Wishzy ngay hôm nay!"
   }
-}
+} 

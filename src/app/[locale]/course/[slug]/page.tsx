@@ -1,9 +1,13 @@
 import { CourseService } from '@/services/course.service'
-import CourseDetailLayout from '@/components/pages/detail-page/course-detail-layout';
+import CourseDetailLayout from '@/components/pages/detail-page/course-detail-layout'
 import { notFound } from 'next/navigation'
 
-export default async function CourseDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params
+export default async function CourseDetailPage({
+  params,
+}: {
+  params: Promise<{  slug: string }>;
+}) {
+  const { slug } = await params
 
   try {
     const res = await CourseService.getCourseBySlug(slug)

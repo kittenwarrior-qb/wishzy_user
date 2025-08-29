@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import CourseCard from '@/components/shared/course-card';
 import { CourseService } from '@/services/course.service';
-import { Skeleton } from '@/components/ui/skeleton'
 import { CourseList } from '@/types/schema/course.schema';
+// import { Skeleton } from '@/components/ui/skeleton'
 
 const CourselistSection = ({ courseList }: {courseList: CourseList[]}) => {
   const [course, setCourse] = useState<CourseList[]>([])

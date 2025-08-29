@@ -1,56 +1,61 @@
-import HotListSection from '@/components/pages/home-page/hot-list-section'
-import AboutSection from '@/components/pages/home-page/about-section'
-import BannerSection from '@/components/pages/home-page/banner-section'
-import CategorySection from '@/components/pages/home-page/category-section'
-import ContactSection from '@/components/pages/home-page/contact-section'
-import ResultSection from '@/components/pages/home-page/result-section'
-import SearchSection from '@/components/pages/home-page/search-section'
-import TestimonialSection from '@/components/pages/home-page/testimonial-section'
-import TutorialSection from '@/components/pages/home-page/tutorial-section'
-import { Button } from '@/components/ui/button'
+import HotListSection from "@/components/pages/home-page/hot-list-section";
+import AboutSection from "@/components/pages/home-page/about-section";
+import BannerSection from "@/components/pages/home-page/banner-section";
+import CategorySection from "@/components/pages/home-page/category-section";
+import ContactSection from "@/components/pages/home-page/contact-section";
+import ResultSection from "@/components/pages/home-page/result-section";
+import SearchSection from "@/components/pages/home-page/search-section";
+import TestimonialSection from "@/components/pages/home-page/testimonial-section";
+import TutorialSection from "@/components/pages/home-page/tutorial-section";
+import { genPageMetadata } from "@/app/seo";
+import CourseDecision from "@/components/pages/home-page/course-decision-section";
 
-export default function HomePage() {
+async function fetchBannerImages() {
+  // giả sử fetch api
+  return [
+    "https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif",
+    "https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif",
+    "https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif",
+  ];
+}
+interface PageParams {
+  locale: string;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams | Promise<PageParams>;
+}) {
+  const images = await fetchBannerImages();
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const locale = resolvedParams.locale || "vi";
+
+  return genPageMetadata(locale, "HomePage", {
+    images,
+  });
+}
+
+export default async function HomePage() {
+  const images = await fetchBannerImages();
+
   return (
     <div>
-      <div className="min-h-[650px] bg-neutral/10">
-        <div className="max-w-[1280px] mx-auto">
+      <div className="bg-neutral/10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-0 min-h-[650px] sm:min-h-[550px] xs:min-h-[400px] flex flex-col gap-6">
           <SearchSection />
-          <BannerSection />
+          <BannerSection images={images} />
         </div>
       </div>
+      <HotListSection />
 
-      <div className='py-10'>
-        <div className='mx-auto max-w-[1280px] my-5 pb-3'>
-          <p className='font-semibold text-[22px] mb-6'>Khóa Học và Chứng Chỉ</p>
-          <p className='font-semibold text-[30px] mb-3'>Nổi bật trên Wishzy</p>
-          <p className='text-[18px]'>Khám phá các khóa học được nhiều người biết đến, mọi trình độ</p>
-        </div>
-        <HotListSection/>
-
-        <div className='flex gap-3 mx-auto max-w-[1280px] my-5'>
-          <Button variant="default" className='text-[14px]'>
-            Hiển thị thêm
-          </Button>
-          <Button variant="outline" className='text-[14px]'>
-            Xem tất cả
-          </Button>
-        </div>
-      </div>
-
-      <div className='mx-auto max-w-[1280px]'>
-        <CategorySection />
-      </div>
-
-      <div className='mx-auto max-w-[1280px]'>
-        <ResultSection />
-      </div>
-
-      <div className='mx-auto max-w-[1280px] mt-10'>
-        <AboutSection />
-        <ContactSection />
-        <TestimonialSection />
-        <TutorialSection />
-      </div>
+      <CategorySection />
+      <ResultSection />
+      <CourseDecision />
+      <TestimonialSection />
+      <TutorialSection />
+      <ContactSection />
+      <AboutSection />
     </div>
-  )
+  );
 }

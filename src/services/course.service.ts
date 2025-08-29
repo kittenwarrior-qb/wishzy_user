@@ -7,6 +7,13 @@ import {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+export type GetCourseListParams = {
+  courseName?: string;
+  page?: number;
+  limit?: number;
+  grade?: string; 
+};
+
 export const CourseService = {
   getHotCourse: async (): Promise<CourseListResponse> => {
     const res = await fetch(`${apiUrl}/course/hot-course`, {
@@ -21,8 +28,16 @@ export const CourseService = {
     return courseListResponseSchema.parse(data);
   },
 
-  getCourseList: async (): Promise<CourseListResponse> => {
-    const res = await fetch(`${apiUrl}/course`, {
+  getCourseList: async (params?: GetCourseListParams): Promise<CourseListResponse> => {
+    const query = new URLSearchParams(
+      Object.entries(params ?? {})
+        .filter(([_, v]) => v !== undefined)
+        .map(([k, v]) => [k, String(v)])
+    );
+
+    const url = `${apiUrl}/course${query.toString() ? `?${query.toString()}` : ""}`;
+
+    const res = await fetch(url, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       next: { revalidate: 60 },

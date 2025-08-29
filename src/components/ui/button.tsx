@@ -9,8 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "btn-shadow-primary hidden md:flex px-4 py-2 rounded-lg bg-primary text-primary-content shadow-[0_3px_0_#b56e04] transition duration-100 will-change-transform active:translate-y-[3px] active:shadow-none",
-        outline: "hidden md:flex px-4 py-2 rounded-lg bg-transparent text-primary border border-primary shadow-[0_3px_0_#d48002] transition duration-100 will-change-transform active:translate-y-[3px] active:shadow-none"
+        default: "btn border",
+        outline: "btn border border-base-content/30 bg-base-100 text-base-content hover:bg-base-300",
+        ghost: "",
+        threeD: "btn-shadow-primary hidden md:flex px-4 py-2 rounded-lg bg-primary text-primary-content shadow-[0_3px_0_#b56e04] transition duration-100 will-change-transform active:translate-y-[3px] active:shadow-none",
+        threeDoutline: "hidden md:flex px-4 py-2 rounded-lg bg-transparent text-primary border border-primary shadow-[0_3px_0_#d48002] transition duration-100 will-change-transform active:translate-y-[3px] active:shadow-none",
+        
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
