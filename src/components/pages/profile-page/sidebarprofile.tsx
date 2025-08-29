@@ -42,27 +42,30 @@ export default function MenuProfile({ variant }: MenuProfileProps) {
 
   if (variant === "mobile") {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-md overflow-x-auto md:hidden z-40">
-        <div className="flex py-2 px-1 space-x-2 min-w-max">
+      <div className="fixed bottom-[-1] left-0 right-0 bg-amber-50 py-2 shadow-md overflow-x-auto md:hidden z-40">
+        <div className="flex py-2 px-1 m-2 space-x-6 min-h-[60px] min-w-max relative">
           {studentMenu.map((item, idx) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             return (
-              <Link key={idx} href={item.href} className="min-w-[60px]">
-                {active ? (
-                  <Button
-                    variant="default"
-                    className="flex flex-col items-center justify-center w-full py-2"
-                  >
-                    <Icon size={22} />
-                    <span className="mt-0.5 text-xs">{item.label}</span>
-                  </Button>
-                ) : (
-                  <div className="flex flex-col items-center justify-center px-3 py-1 rounded-lg text-gray-500 hover:text-blue-500 transition">
-                    <Icon size={22} />
-                    <span className="mt-0.5 text-xs">{item.label}</span>
-                  </div>
-                )}
+              <Link key={idx} href={item.href}>
+                <div className="flex flex-col items-center relative">
+                  {active ? (
+                    <Button
+                      variant="default"
+                      className="rounded-full w-14 h-14 -translate-y-3 shadow-lg scale-110 transition-all duration-300 flex items-center justify-center"
+                    >
+                      <Icon size={26} className="text-white size-8" />
+                    </Button>
+                  ) : (
+                    <>
+                      <Icon size={22} className="text-amber-500 font-semibold" />
+                      <span className="mt-0.5 text-xs text-amber-500 font-medium">
+                        {item.label}
+                      </span>
+                    </>
+                  )}
+                </div>
               </Link>
             );
           })}
@@ -73,14 +76,14 @@ export default function MenuProfile({ variant }: MenuProfileProps) {
 
   return (
     <>
-      <div className="fixed top-6 left-4 md:flex lg:hidden z-50">
+      <div className="fixed top-16 left-4 md:flex lg:hidden z-50">
         <Button onClick={() => setIsOpen(true)} variant="outline">
           <Menu size={24} />
         </Button>
       </div>
 
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity lg:hidden ${
+        className={`fixed inset-0 bg-opacity-50 z-40 transition-opacity lg:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsOpen(false)}

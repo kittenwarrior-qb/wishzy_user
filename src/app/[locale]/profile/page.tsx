@@ -7,14 +7,14 @@ import {
   Heart,
   Bell,
   Play,
-  Users,
   HelpCircle,
   Download,
   BadgeCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import Avatar from "@/assets/cv1.jpg";
-import aiw from "@/assets/aiw.png";
+import Logo from "@/assets/wishzy-logo.png";
 
 import UserInfo from "@/components/pages/profile-page/UserInfo";
 import Activities from "@/components/pages/profile-page/Activities";
@@ -87,6 +87,13 @@ export default function ProfileDashboard() {
   const displayStats = useMemo(
     () => [
       {
+        label: "Notifications",
+        value: stats.notifications,
+        color: "bg-amber-50",
+        iconWrap: "bg-amber-100 text-amber-600",
+        icon: <Bell size={20} />,
+      },
+      {
         label: "Courses",
         value: stats.courses,
         color: "bg-blue-50",
@@ -99,13 +106,6 @@ export default function ProfileDashboard() {
         color: "bg-pink-50",
         iconWrap: "bg-pink-100 text-pink-600",
         icon: <Heart size={20} />,
-      },
-      {
-        label: "Notifications",
-        value: stats.notifications,
-        color: "bg-amber-50",
-        iconWrap: "bg-amber-100 text-amber-600",
-        icon: <Bell size={20} />,
       },
     ],
     [stats]
@@ -146,9 +146,17 @@ export default function ProfileDashboard() {
 
   return (
     <div className="space-y-8">
-      <section className="bg-gradient-to-r p-5 sm:p-6 text-amber-500 shadow-md">
+      <section className="relative bg-gradient-to-r p-5 sm:p-6 text-amber-500 shadow-md">
+        <Link href="/" className="absolute top-2 right-6">
+          <Image
+            src={Logo.src || Logo}
+            alt="Wishzy Logo"
+            width={80}
+            height={30}
+            className="block sm:hidden"
+          />
+        </Link>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Avatar + Chào tên */}
           <div className="flex items-center gap-4">
             <div className="relative w-14 h-14 shrink-0">
               <Image
@@ -180,28 +188,28 @@ export default function ProfileDashboard() {
           </div>
 
           <div className="grid grid-cols-2 sm:flex gap-2">
-            <Button variant="default" className=" flex items-center gap-2">
+            <Button variant="default" className="flex items-center gap-2">
               <Play size={16} /> Tiếp tục học
             </Button>
-            <Button variant="outline" className=" hover:bg-gray-100 flex items-center gap-2">
+            <Button variant="outline" className="hover:bg-gray-100 flex items-center gap-2">
               <BookOpen size={16} /> Tài liệu
             </Button>
-            <Button variant="outline" className=" hover:bg-gray-100 flex items-center gap-2">
+            <Button variant="outline" className="hover:bg-gray-100 flex items-center gap-2">
               <HelpCircle size={16} /> Hỗ trợ
             </Button>
-            <Button variant="outline" className=" hover:bg-gray-100 flex items-center gap-2">
+            <Button variant="outline" className="hover:bg-gray-100 flex items-center gap-2">
               <Download size={16} /> Xuất dữ liệu
             </Button>
           </div>
         </div>
       </section>
 
-      <div className="overflow-x-auto py-4">
+      <div className="overflow-x-auto hide-scrollbar">
         <div className="flex gap-4 min-w-max px-4">
           {displayStats.map((stat, idx) => (
             <div
               key={idx}
-              className={`p-4 rounded-xl shadow-sm ${stat.color} hover:shadow-md transition min-w-[150px] flex-shrink-0`}
+              className={`p-4 rounded-xl shadow-sm ${stat.color} transition min-w-[330px] min-h-[100px] flex-shrink-0`}
             >
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stat.iconWrap}`}>
@@ -209,13 +217,14 @@ export default function ProfileDashboard() {
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">{stat.label}</p>
-                  <p className="text-xl font-semibold ">{stat.value}</p>
+                  <p className="text-xl font-semibold">{stat.value}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="space-y-6 xl:col-span-2">
           <UserInfo user={user} handleChange={handleChange as (field: string, value: string) => void} />

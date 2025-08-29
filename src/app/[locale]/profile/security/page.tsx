@@ -80,7 +80,7 @@ export default function ProfileSecurity() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className=" rounded-xl shadow shadow-white p-6 transition flex flex-col">
+        <div className=" rounded-xl shadow shadow-white p-2 transition flex flex-col">
           <h2 className="text-xl font-semibold mb-2">Đổi mật khẩu</h2>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -126,7 +126,7 @@ export default function ProfileSecurity() {
               <Button
                 variant="default"
                 type="submit"
-                className="w-full py-2"
+                className="w-full py-2 flex items-center gap-1"
                 disabled={isLoading}
               >
                 {isLoading ? "Đang cập nhật..." : "Lưu mật khẩu mới"}
@@ -135,17 +135,17 @@ export default function ProfileSecurity() {
           </Form>
         </div>
 
-        <div className="shadow-white rounded-xl shadow p-6 transition flex flex-col justify-between">
+        <div className="shadow-white rounded-xl shadow p-2 transition flex flex-col justify-between">
           <div>
             <h2 className="text-xl font-semibold mb-2">Xác thực hai yếu tố (2FA)</h2>
             <p className="mb-4">Thêm lớp bảo mật cho tài khoản bằng cách bật 2FA.</p>
           </div>
-          <Button className="mt-auto w-full py-2 rounded-lg shadow transition">
+          <Button className="mt-auto w-full flex items-center gap-1 py-2 rounded-lg shadow transition">
             Bật 2FA
           </Button>
         </div>
 
-        <div className="rounded-xl shadow-white shadow p-6 col-span-1 md:col-span-2">
+        <div className="rounded-xl shadow-white shadow p-2 col-span-1 md:col-span-2">
           <h2 className="text-xl font-semibold mb-2">Lịch sử đăng nhập</h2>
           <div className="space-y-2 max-h-60 overflow-auto">
             {loginHistory.map((item, idx) => (
@@ -158,12 +158,12 @@ export default function ProfileSecurity() {
               </div>
             ))}
           </div>
-          <Button variant="outline" className="mt-3 w-full py-2">
+          <Button variant="outline" className="mt-3 w-full py-2 flex items-center gap-1">
             Xem tất cả
           </Button>
         </div>
 
-        <div className="rounded-xl shadow p-6 shadow-white transition col-span-1 md:col-span-2">
+        <div className="rounded-xl shadow p-2 shadow-white transition col-span-1 md:col-span-2">
           <h2 className="text-xl font-semibold mb-2">Thiết bị đăng nhập gần đây</h2>
           <div className="space-y-2">
             {recentDevices.map((item, idx) => (
@@ -181,7 +181,7 @@ export default function ProfileSecurity() {
           </div>
         </div>
 
-        <div className="rounded-xl shadow p-6 shadow-white transition col-span-1 md:col-span-2">
+        <div className="rounded-xl shadow p-2 shadow-white transition col-span-1 md:col-span-2">
           <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
             <AlertCircle /> Cảnh báo bảo mật
           </h2>

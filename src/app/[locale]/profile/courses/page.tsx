@@ -137,11 +137,11 @@ export default function ProfileCourses() {
               </CardContent>
 
               <CardFooter className="flex gap-2 px-4 pb-4">
-                <Button variant="default" className="flex-1">
+                <Button variant="default" className="flex items-center gap-1">
                   View Lessons
                 </Button>
                 {course.status !== "Completed" && (
-                  <Button variant="outline" className="flex-1">
+                  <Button variant="outline" className="flex items-center gap-1">
                     Mark Complete
                   </Button>
                 )}
@@ -171,7 +171,7 @@ export default function ProfileCourses() {
               <CardFooter className="px-4 pb-4">
                 <Button
                   variant="default"
-                  className="w-full"
+                  className="w-full flex items-center gap-1 "
                   onClick={() => setSelectedCert(cert)}
                 >
                   View Certificate
