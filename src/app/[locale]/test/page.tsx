@@ -1,155 +1,44 @@
-'use client'
+"use client";
+import React, { useState } from "react";
+import MenuProfile from "@/components/pages/profile-page/sidebarprofile";
+import { Menu } from "lucide-react";
 
-import CourselistSection from '@/components/pages/home-page/courselist-section'
-import { Course } from '@/types/models/course'
+export default function ProfileLayout({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
 
-export default function Test() {
-  const courseListClone: Course[] = [
-    {
-      _id: "1",
-      courseName: "Luyện thi vào 10 Toán nâng cao",
-      description: "Khóa học luyện thi môn Toán dành cho học sinh lớp 9 chuẩn bị thi vào lớp 10 chuyên.",
-      thumbnail: "/images/math9.jpg",
-      price: 499000,
-      sale: null,
-      status: true,
-      rating: 4.5,
-      numberOfStudents: 1200,
-      level: "Nâng cao",
-      requirements: [],
-      totalDuration: 1800,
-      subject: {
-        _id: "subj1",
-        subjectName: "Toán",
-        grade: {
-          _id: "grade9",
-          gradeName: "Lớp 9",
-          status: true,
-          slug: "lop-9",
-          createdAt: new Date("2024-08-01T10:00:00Z"),
-          updatedAt: new Date("2024-08-01T10:00:00Z"),
-        },
-        status: true,
-        slug: "toan",
-        createdAt: new Date("2024-08-01T10:00:00Z"),
-        updatedAt: new Date("2024-08-01T10:00:00Z"),
-      },
-      createdBy: {
-        name: "Thầy Nguyễn Văn A",
-      },
-      createdAt: new Date("2024-08-01T10:00:00Z"),
-      updatedAt: new Date("2024-08-01T10:00:00Z"),
-      slug: "luyen-thi-vao-10-toan",
-    },
-    {
-      _id: "2",
-      courseName: "Ngữ văn 9 - Ôn thi vào 10",
-      description: "Khóa học giúp học sinh ôn tập kiến thức ngữ văn trọng tâm để chuẩn bị thi vào lớp 10.",
-      thumbnail: "/images/literature9.jpg",
-      price: 399000,
-      sale: null,
-      status: true,
-      rating: 4.2,
-      numberOfStudents: 980,
-      level: "Cơ bản",
-      requirements: [],
-      totalDuration: 1600,
-      subject: {
-        _id: "subj2",
-        subjectName: "Ngữ văn",
-        grade: {
-          _id: "grade9",
-          gradeName: "Lớp 9",
-          status: true,
-          slug: "lop-9",
-          createdAt: new Date("2024-08-01T10:00:00Z"),
-          updatedAt: new Date("2024-08-01T10:00:00Z"),
-        },
-        status: true,
-        slug: "ngu-van",
-        createdAt: new Date("2024-08-01T10:00:00Z"),
-        updatedAt: new Date("2024-08-01T10:00:00Z"),
-      },
-      createdBy: {
-        name: "Cô Trần Thị B",
-      },
-      createdAt: new Date("2024-08-01T10:00:00Z"),
-      updatedAt: new Date("2024-08-01T10:00:00Z"),
-      slug: "ngu-van-9-on-thi",
-    },
-    {
-      _id: "3",
-      courseName: "Tiếng Anh 9 - Luyện đề vào 10",
-      description: "Hệ thống đề thi thử bám sát cấu trúc thi vào lớp 10 môn Tiếng Anh.",
-      thumbnail: "/images/english9.jpg",
-      price: 450000,
-      sale: 399000,
-      status: true,
-      rating: 4.7,
-      numberOfStudents: 1100,
-      level: "Trung bình",
-      requirements: [],
-      totalDuration: 1500,
-      subject: {
-        _id: "subj3",
-        subjectName: "Tiếng Anh",
-        grade: {
-          _id: "grade9",
-          gradeName: "Lớp 9",
-          status: true,
-          slug: "lop-9",
-          createdAt: new Date("2024-08-01T10:00:00Z"),
-          updatedAt: new Date("2024-08-01T10:00:00Z"),
-        },
-        status: true,
-        slug: "tieng-anh",
-        createdAt: new Date("2024-08-01T10:00:00Z"),
-        updatedAt: new Date("2024-08-01T10:00:00Z"),
-      },
-      createdBy: {
-        name: "Cô Nguyễn Thị C",
-      },
-      createdAt: new Date("2024-08-01T10:00:00Z"),
-      updatedAt: new Date("2024-08-01T10:00:00Z"),
-      slug: "tieng-anh-9-luyen-de",
-    },
-    {
-      _id: "4",
-      courseName: "Vật lý 9 - Ôn tập toàn diện ",
-      description: "Tổng hợp kiến thức Vật lý 9 trọng tâm giúp học sinh củng cố và ôn luyện hiệu quả.Tổng hợp kiến thức Vật lý 9 trọng tâm giúp học sinh củng cố và ôn luyện hiệu quả.",
-      thumbnail: "/images/physics9.jpg",
-      price: 370000,
-      sale: null,
-      status: true,
-      rating: 4.0,
-      numberOfStudents: 850,
-      level: "Cơ bản",
-      requirements: [],
-      totalDuration: 1400,
-      subject: {
-        _id: "subj4",
-        subjectName: "Vật lý",
-        grade: {
-          _id: "grade9",
-          gradeName: "Lớp 9",
-          status: true,
-          slug: "lop-9",
-          createdAt: new Date("2024-08-01T10:00:00Z"),
-          updatedAt: new Date("2024-08-01T10:00:00Z"),
-        },
-        status: true,
-        slug: "vat-ly",
-        createdAt: new Date("2024-08-01T10:00:00Z"),
-        updatedAt: new Date("2024-08-01T10:00:00Z"),
-      },
-      createdBy: {
-        name: "Thầy Trần Văn D",
-      },
-      createdAt: new Date("2024-08-01T10:00:00Z"),
-      updatedAt: new Date("2024-08-01T10:00:00Z"),
-      slug: "vat-ly-9-on-tap",
-    },
-  ]
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar PC */}
+      <aside className="hidden md:block w-72 bg-white border-r shadow-sm">
+        <MenuProfile />
+      </aside>
 
-  return <CourselistSection courseList={courseListClone} />
+      {/* Sidebar Mobile */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 flex md:hidden"
+          onClick={() => setOpen(false)}
+        >
+          <div className="w-72 h-full bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <MenuProfile onClose={() => setOpen(false)} />
+          </div>
+          <div className="flex-1 bg-black/50"></div>
+        </div>
+      )}
+
+      {/* Nội dung chính */}
+      <main className="flex-1 p-6 md:p-8">
+        {/* Nút mở menu trên mobile */}
+        <button
+          onClick={() => setOpen(true)}
+          className="md:hidden mb-4 flex items-center gap-2 px-3 py-2 rounded-lg border shadow-sm bg-white"
+        >
+          <Menu size={20} />
+          <span>Menu</span>
+        </button>
+
+        {children}
+      </main>
+    </div>
+  );
 }
