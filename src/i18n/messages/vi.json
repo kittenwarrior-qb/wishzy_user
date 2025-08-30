@@ -7,7 +7,19 @@
       "courses": "Khóa học",
       "categories": "Danh mục",
       "practice": "Luyện đề"
+    },
+    "HotListSection": {
+      "name": "Khóa Học và Chứng Chỉ",
+      "title": "Nổi bật trên Wishzy",
+      "description": "Khám phá các khóa học được nhiều người biết đến, mọi trình độ",
+      "showMore": "Hiển thị thêm",
+      "viewAll": "Xem tất cả"
     }
+  },
+  "AboutPage": {
+    "title": "Wishzy - Tìm khóa học, luyện đề thi trực tuyến!",
+    "description": "Khám phá hàng triệu khóa học trực tuyến và luyện đề thi miễn phí. Nâng cao kỹ năng của bạn với Wishzy ngay hôm nay!"
+
   }
 }
 
