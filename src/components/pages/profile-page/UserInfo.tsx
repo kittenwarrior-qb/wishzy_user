@@ -21,11 +21,11 @@ export default function UserInfo({ user, handleChange }: UserInfoProps) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <User className="text-amber-500" size={32} />
             <h2 className="text-lg font-semibold">Thông tin cá nhân</h2>
-            <User className="text-amber-500" size={20} />
         </div>
         <Button variant="outline" className="flex items-center gap-1">
-          <Settings size={16} /> Tùy chỉnh
+           <Settings size={16} /> Tùy chỉnh
         </Button>
       </div>
 

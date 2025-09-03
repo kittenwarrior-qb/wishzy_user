@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState} from "react";
 import Image from "next/image";
 import {
   BookOpen,
-  Heart,
-  Bell,
   Play,
   HelpCircle,
   Download,
@@ -16,8 +14,9 @@ import Link from "next/link";
 import Avatar from "@/assets/cv1.jpg";
 import Logo from "@/assets/wishzy-logo.png";
 
+import MenuProfile from "@/components/pages/profile-page/sidebarprofile";
 import UserInfo from "@/components/pages/profile-page/UserInfo";
-import Activities from "@/components/pages/profile-page/Activities";
+// import Activities from "@/components/pages/profile-page/Activities";
 import Courses from "@/components/pages/profile-page/Courses";
 import Schedule from "@/components/pages/profile-page/Schedule";
 import Certificates from "@/components/pages/profile-page/Certificates";
@@ -64,11 +63,6 @@ export interface CertificateType {
 }
 
 export default function ProfileDashboard() {
-  const [stats] = useState<Stats>({
-    courses: 12,
-    favorites: 8,
-    notifications: 5,
-  });
 
   const [user, setUser] = useState<UserInfoType>({
     name: "Hồ Văn Duy",
@@ -83,33 +77,6 @@ export default function ProfileDashboard() {
   const handleChange = (field: keyof UserInfoType, value: string) => {
     setUser({ ...user, [field]: value });
   };
-
-  const displayStats = useMemo(
-    () => [
-      {
-        label: "Notifications",
-        value: stats.notifications,
-        color: "bg-amber-50",
-        iconWrap: "bg-amber-100 text-amber-600",
-        icon: <Bell size={20} />,
-      },
-      {
-        label: "Courses",
-        value: stats.courses,
-        color: "bg-blue-50",
-        iconWrap: "bg-blue-100 text-blue-600",
-        icon: <BookOpen size={20} />,
-      },
-      {
-        label: "Favorites",
-        value: stats.favorites,
-        color: "bg-pink-50",
-        iconWrap: "bg-pink-100 text-pink-600",
-        icon: <Heart size={20} />,
-      },
-    ],
-    [stats]
-  );
 
   const courses: CourseType[] = [
     { name: "React Basics", progress: 75, status: "In Progress", image: "aiw" },
@@ -147,6 +114,9 @@ export default function ProfileDashboard() {
   return (
     <div className="space-y-8">
       <section className="relative bg-gradient-to-r p-5 sm:p-6 text-amber-500 shadow-md">
+        <div className="absolute top-2 right-6 hidden md:block lg:hidden">
+          <MenuProfile variant="toggle" />
+        </div>
         <Link href="/" className="absolute top-2 right-6">
           <Image
             src={Logo.src || Logo}
@@ -186,7 +156,7 @@ export default function ProfileDashboard() {
               </motion.h1>
             </div>
           </div>
-
+          
           <div className="grid grid-cols-2 sm:flex gap-2">
             <Button variant="default" className="flex items-center gap-2">
               <Play size={16} /> Tiếp tục học
@@ -204,39 +174,12 @@ export default function ProfileDashboard() {
         </div>
       </section>
 
-      <div className="overflow-x-auto hide-scrollbar">
-        <div className="flex gap-4 min-w-max px-4">
-          {displayStats.map((stat, idx) => (
-            <div
-              key={idx}
-              className={`p-4 rounded-xl shadow-sm ${stat.color} transition min-w-[330px] min-h-[100px] flex-shrink-0`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stat.iconWrap}`}>
-                  {stat.icon}
-                </div>
-                <div>
-                  <p className="text-gray-600 text-sm">{stat.label}</p>
-                  <p className="text-xl font-semibold">{stat.value}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="space-y-6 xl:col-span-2">
-          <UserInfo user={user} handleChange={handleChange as (field: string, value: string) => void} />
-          <Activities activities={activities} />
-          <Courses courses={courses} />
-        </div>
-
-        <div className="space-y-6">
-          <Schedule schedules={schedules} />
-          <Certificates certificates={certificates} />
-          {<TeacherPanel />}
-        </div>
+      <div className="space-y-6 px-4">
+        <UserInfo user={user} handleChange={handleChange as (field: string, value: string) => void} />
+        <Schedule schedules={schedules} />
+        <Certificates certificates={certificates} />
+        <Courses courses={courses} />
+        {<TeacherPanel />}
       </div>
     </div>
   );

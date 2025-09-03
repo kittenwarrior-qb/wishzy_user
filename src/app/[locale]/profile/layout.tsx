@@ -5,14 +5,16 @@ import "./profile.css";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen ">
-      <MenuProfile variant="sidebar" />
+    <div className="flex max-w-7xl mx-auto">
+      <div className="hidden lg:block">
+        <MenuProfile variant="sidebar" />
+      </div>
 
-      <main className="flex-1 overflow-y-auto pb-6 h-screen hide-scrollbar ">
+      <main className="flex-1 overflow-y-auto pb-32 h-screen hide-scrollbar">
         {children}
       </main>
 
-      <div className="md:hidden">
+      <div className="block lg:hidden">
         <MenuProfile variant="mobile" />
       </div>
     </div>
