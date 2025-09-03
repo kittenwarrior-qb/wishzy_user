@@ -145,28 +145,32 @@ Sau khi hoàn thành khóa học, bạn sẽ có đủ kỹ năng để ứng tu
         date: "1 tháng trước"
       }
     ],
-    relatedCourses: [
-      {
-        id: "1",
-        name: "React Native Mobile Development",
-        info: "Cùng giảng viên • 45 giờ học"
-      },
-      {
-        id: "2",
-        name: "Database Design & Optimization",
-        info: "Cùng chủ đề • 35 giờ học"
-      },
-      {
-        id: "3",
-        name: "Cloud Computing với AWS",
-        info: "Cùng chủ đề • 40 giờ học"
-      },
-        {
-        id: "4",
-        name: "React Native Mobile Development",
-        info: "Cùng giảng viên • 45 giờ học"
-      },
-    ]
+   relatedCourses: [
+  {
+    id: "1",
+    name: "React Native Mobile Development",
+    info: "Cùng giảng viên • 45 giờ học",
+    img: "/images/courses/react-native.jpg", // ảnh thật
+  },
+  {
+    id: "2",
+    name: "Database Design & Optimization",
+    info: "Cùng chủ đề • 35 giờ học",
+    img: "/images/courses/database.jpg",
+  },
+  {
+    id: "3",
+    name: "Cloud Computing với AWS",
+    info: "Cùng chủ đề • 40 giờ học",
+    img: "/images/courses/cloud.jpg",
+  },
+  {
+    id: "4",
+    name: "React Native Mobile Development",
+    info: "Cùng giảng viên • 45 giờ học",
+    img: "/images/courses/react2.jpg",
+  },
+],
   };
 
   return <CourseDetailLayout course={courseData} />;
