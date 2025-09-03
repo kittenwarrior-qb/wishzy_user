@@ -11,7 +11,6 @@ import { genPageMetadata } from "@/app/seo";
 import CourseDecision from "@/components/pages/home-page/course-decision-section";
 
 async function fetchBannerImages() {
-  // giả sử fetch api
   return [
     "https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif",
     "https://res.cloudinary.com/djuksxdrw/image/upload/v1754121769/photo-1548360129-ae7eb8da13b2_jmw5pq.avif",
@@ -40,7 +39,7 @@ export default async function HomePage() {
   const images = await fetchBannerImages();
 
   return (
-    <div>
+    <div className="flex flex-col gap-20">
       <div className="bg-neutral/10">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-0 min-h-[650px] sm:min-h-[550px] xs:min-h-[400px] flex flex-col gap-6">
           <SearchSection />
@@ -48,10 +47,11 @@ export default async function HomePage() {
         </div>
       </div>
       <HotListSection />
+      <HotListSection />
 
-      <CategorySection />
       <ResultSection />
       <CourseDecision />
+      <CategorySection />
       <TestimonialSection />
       <TutorialSection />
       <ContactSection />

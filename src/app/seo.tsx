@@ -23,6 +23,11 @@ export async function genPageMetadata(
     ? props.images
     : [siteMetadata.socialBanner]
 
+  const languages: Record<string, string> = {}
+  siteMetadata.locales.forEach((loc) => {
+    languages[loc] = `${siteMetadata.siteUrl}/${loc}`
+  })
+
   return {
     title,
     description,
@@ -30,9 +35,9 @@ export async function genPageMetadata(
     openGraph: {
       title,
       description,
-      url: siteMetadata.siteUrl,
+      url: `${siteMetadata.siteUrl}/${locale}`,
       siteName: t(`${pageKey}.title`),
-      images: images.map((img) => ({ url: img })), 
+      images: images.map((img) => ({ url: img })),
       locale,
       type: 'website',
     },
@@ -41,6 +46,10 @@ export async function genPageMetadata(
       description,
       card: 'summary_large_image',
       images: [images[0]],
+    },
+    alternates: {
+      canonical: `${siteMetadata.siteUrl}/${locale}`,
+      languages, 
     },
     ...props,
   }

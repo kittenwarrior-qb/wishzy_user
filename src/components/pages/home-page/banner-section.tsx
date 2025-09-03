@@ -32,13 +32,14 @@ const BannerSection = ({ images }: BannerSectionProps) => {
                   width={1200}
                   height={400}
                   priority={index === 0}
+                  
                 />
               </CarouselItem>
             ))}
           </CarouselContent>
 
-          <CarouselPrevious className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 rounded-full z-10" />
-          <CarouselNext className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 rounded-full z-10" />
+          <CarouselPrevious className="absolute left-2 sm:left-4 top-1/2  rounded-full z-10" />
+          <CarouselNext className="absolute right-2 sm:right-4 top-1/2  rounded-full z-10" />
         </Carousel>
       </div>
     </div>

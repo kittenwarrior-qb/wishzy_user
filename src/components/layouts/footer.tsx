@@ -25,13 +25,19 @@ const footerData = {
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col w-full items-center justify-center gap-4 px-16 py-6 bg-white">
-      <div className="flex items-center justify-center gap-36 w-full">
+    <footer className="flex flex-col w-full items-center justify-center gap-6 px-6 md:px-16 py-8 bg-white">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 md:gap-20 w-full max-w-[1280px]">
         {/* Logo + Intro */}
-        <div className="flex flex-col items-start gap-4">
-            <Image src={Logo.src || Logo} alt="Logo" width={120} height={40} />
+        <div className="flex flex-col items-start gap-4 max-w-sm">
+          <Image
+            src={Logo.src || Logo}
+            alt="Logo"
+            width={120}
+            height={40}
+            className="object-contain"
+          />
 
-          <p className="w-[388px] text-sm text-black">
+          <p className="text-sm text-black leading-relaxed">
             Welcome to Estrella, where brilliance meets innovation! <br />
             We are a leading company dedicated to delivering exceptional
             products and services to cater to your needs.
@@ -46,7 +52,7 @@ export default function Footer() {
         </div>
 
         {/* Links */}
-        <div className="flex items-start gap-20">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-16 w-full md:w-auto">
           <div className="flex flex-col items-start gap-2">
             <h3 className="font-bold text-base text-black">Categories</h3>
             {footerData.categories.map((category, index) => (
@@ -78,22 +84,14 @@ export default function Footer() {
             <h3 className="font-bold text-base text-black">Pages</h3>
             {footerData.pages.map((page, index) => (
               <div key={index} className="text-base text-black font-medium">
-                {page === "Services" ? (
-                  <>
-                    Services
-                    <br />
-                    Blog
-                  </>
-                ) : (
-                  page
-                )}
+                {page}
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <Separator className="w-full max-w-[1200px]" />
+      <Separator className="w-full max-w-[1280px]" />
 
       <div className="flex items-center justify-center gap-1 text-[11px] text-black font-medium">
         <Copyright className="w-3 h-3" />

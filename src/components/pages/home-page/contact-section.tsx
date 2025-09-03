@@ -17,7 +17,7 @@ const ContactSection = () => {
 
   return (
     <section className="flex flex-col items-center justify-center gap-7 py-10 w-full">
-      <div className="flex flex-col w-full max-w-[1280px] items-center gap-10">
+      <div className="flex flex-col w-full max-w-[1280px] px-3 items-center gap-10">
         <h2 className="font-semibold text-2xl md:text-3xl">
           Liên hệ với chúng tôi
         </h2>

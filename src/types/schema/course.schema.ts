@@ -68,28 +68,28 @@ export const courseDetailResponseSchema = msgSchema.extend({
 });
 
 export type CourseList = z.infer<typeof courseListSchema>;
-// export type CourseDetail = z.infer<typeof courseDetailSchema>;
+export type CourseDetail = z.infer<typeof courseDetailSchema>;
 
 export type CourseListResponse = z.infer<typeof courseListResponseSchema>;
 export type CourseDetailResponse = z.infer<typeof courseDetailResponseSchema>;
 
 
-export interface CourseDetail {
-  id: string;
-  name: string;
-  rating: number;
-  totalReviews: number;
-  duration: string;
-  level: string;
-  studyFormat: string;
-  price: number;
-  image: string;
-  description: string;
-  modules: CourseModule[];
-  instructors: Instructor[];
-  reviews: Review[];
-  relatedCourses: RelatedCourse[];
-}
+// export interface CourseDetail {
+//   id: string;
+//   name: string;
+//   rating: number;
+//   totalReviews: number;
+//   duration: string;
+//   level: string;
+//   studyFormat: string;
+//   price: number;
+//   image: string;
+//   description: string;
+//   modules: CourseModule[];
+//   instructors: Instructor[];
+//   reviews: Review[];
+//   relatedCourses: RelatedCourse[];
+// }
 
 export interface CourseModule {
   id: string;

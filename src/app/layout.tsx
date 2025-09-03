@@ -13,7 +13,7 @@ const beVietnamPro = Be_Vietnam_Pro({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" data-theme="wishzy" suppressHydrationWarning>
+    <html data-theme="wishzy" suppressHydrationWarning>
       <body className={`${beVietnamPro.variable} antialiased`}>
         <Transition>
           {children}
