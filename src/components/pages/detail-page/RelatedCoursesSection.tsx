@@ -97,7 +97,7 @@ export default function KhoaHocLienQuan() {
             <Button>
               Xem chi tiết
             </Button>  
-            </CardContent>
+            </CardContent>  
           </Card>
         ))}
       </div>
