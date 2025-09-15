@@ -103,52 +103,108 @@ const ModulesSection = ({ services }: ModulesSectionProps) => {
   //     </div>
   //   </div>
 
-      <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Nội dung khóa học</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {services.map((module) => (
-          <div 
-            key={module.id} 
-            className="border border-gray-200 rounded-md p-4 cursor-pointer transition-colors duration-200 hover:bg-gray-50"
-            onClick={() => toggleExpand(module.id)}
-          >
-            <div className="flex justify-between items-center">
-              <div className="font-semibold">{module.name}</div>
-              <ChevronDown 
-                size={20} 
-                className={`transform transition-transform duration-300 ${
-                  expandedModule === module.id ? 'rotate-180' : ''
-                }`}
-              />
-            </div>
-            <div className="flex items-center text-sm text-gray-600 mt-1">
-              <Clock size={14} className="mr-1" />
-              <span>{module.lessons} bài giảng • {module.duration}</span>
-            </div>
-            <div className={`font-semibold mt-2 ${
-              module.price === 0 ? 'text-green-600' : 'text-blue-600'
-            }`}>
-              {module.price === 0 ? 'Miễn phí' : 'Có phí'}
-            </div>
+    //   <div className="p-6">
+    //   <h2 className="text-xl font-semibold mb-4">Nội dung khóa học</h2>
+    //   <div className="">
+    //     {services.map((module) => (
+    //       <div 
+    //         key={module.id} 
+    //         className="border border-gray-200 rounded-md p-4 cursor-pointer transition-colors duration-200 hover:bg-gray-50"
+    //         onClick={() => toggleExpand(module.id)}
+    //       >
+    //         <div className="flex justify-between items-center">
+    //           <div className="font-semibold">{module.name}</div>
+    //           <ChevronDown 
+    //             size={20} 
+    //             className={`transform transition-transform duration-300 ${
+    //               expandedModule === module.id ? 'rotate-180' : ''
+    //             }`}
+    //           />
+    //         </div>
+    //         <div className="flex items-center text-sm text-gray-600 mt-1 mb-4">
+    //           <Clock size={14} className="mr-1" />
+    //           <span>{module.lessons} bài giảng • {module.duration}</span>
+    //         </div>
+    //         <div className={`font-semibold mt-2 ${
+    //           module.price === 0 ? 'text-green-600' : 'text-blue-600'
+    //         }`}>
+    //           {module.price === 0 ? 'Miễn phí' : 'Có phí'}
+    //         </div>
 
-            {/* Nội dung chi tiết chỉ hiển thị khi module được bung ra */}
-            {expandedModule === module.id && (
-              <div className="mt-4 text-gray-700">
-                <ul className="list-none space-y-2">
-                  {moduleDetails[module.id]?.map(lesson => (
-                    <li key={lesson.id} className="flex items-center text-sm">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
-                      <span className="flex-1">{lesson.title}</span>
-                      <span className="text-gray-500 ml-4">{lesson.duration}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+    //         {/* Nội dung chi tiết chỉ hiển thị khi module được bung ra */}
+    //         {expandedModule === module.id && (
+    //           <div className="mt-4 text-gray-700">
+    //             <ul className="list-none space-y-2">
+    //               {moduleDetails[module.id]?.map(lesson => (
+    //                 <li key={lesson.id} className="flex items-center text-sm">
+    //                   <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+    //                   <span className="flex-1">{lesson.title}</span>
+    //                   <span className="text-gray-500 ml-4">{lesson.duration}</span>
+    //                 </li>
+    //               ))}
+    //             </ul>
+    //           </div>
+    //         )}
+    //       </div>
+    //     ))}
+    //   </div>
+    // </div>
+
+
+    <div className="p-6">
+  <h2 className="text-xl font-semibold mb-4">Nội dung khóa học</h2>
+
+  {/* Thêm space-y-4 để có khoảng cách giữa các module */}
+  <div className="space-y-4">
+    {services.map((module) => (
+      <div
+        key={module.id}
+        className="border border-gray-200 rounded-md p-4 cursor-pointer transition-all duration-200 hover:bg-gray-50 shadow-sm hover:shadow-md"
+        onClick={() => toggleExpand(module.id)}
+      >
+        <div className="flex justify-between items-center">
+          <div className="font-semibold">{module.name}</div>
+          <ChevronDown
+            size={20}
+            className={`transform transition-transform duration-300 ${
+              expandedModule === module.id ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+
+        <div className="flex items-center text-sm text-gray-600 mt-1 mb-4">
+          <Clock size={14} className="mr-1" />
+          <span>
+            {module.lessons} bài giảng • {module.duration}
+          </span>
+        </div>
+
+        <div
+          className={`font-semibold mt-2 ${
+            module.price === 0 ? "text-green-600" : "text-blue-600"
+          }`}
+        >
+          {module.price === 0 ? "Miễn phí" : "Có phí"}
+        </div>
+
+        {/* Nội dung chi tiết chỉ hiển thị khi module được bung ra */}
+        {expandedModule === module.id && (
+          <div className="mt-4 text-gray-700">
+            <ul className="list-none space-y-2">
+              {moduleDetails[module.id]?.map((lesson) => (
+                <li key={lesson.id} className="flex items-center text-sm">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                  <span className="flex-1">{lesson.title}</span>
+                  <span className="text-gray-500 ml-4">{lesson.duration}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        ))}
+        )}
       </div>
-    </div>
+    ))}
+  </div>
+</div>
 
   );
 };
