@@ -74,7 +74,7 @@ export default function KhoaHocLienQuan() {
   ]
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="">
       {/* Tiêu đề section */}
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
         📚 Khóa học liên quan
