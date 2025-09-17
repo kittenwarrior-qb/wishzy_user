@@ -109,6 +109,7 @@
 "use client"
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 export default function GiangVienPage() {
   // vì chỉ có 1 giảng viên nên hardcode hoặc fetch cũng được
   const giangVien = {
@@ -131,9 +132,7 @@ export default function GiangVienPage() {
           <p><span className="font-medium">Giới thiệu:</span> {giangVien.moTa}</p>
         </CardContent>
         <CardFooter className="mt-4 flex justify-end">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
-            Liên hệ
-          </button>
+          <Button>Liên hệ</Button>
         </CardFooter>
       </Card>
     </div>

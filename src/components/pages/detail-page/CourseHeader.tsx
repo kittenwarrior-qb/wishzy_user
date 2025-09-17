@@ -70,8 +70,11 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
           </div>
 
           <div className="mt-6">
-            <Button className="w-50 bg-primary text-white py-3 px-4 rounded-md font-semibold hover:bg-blue-700 transition duration-300">
+            {/* <Button className="w-50 bg-primary text-white py-3 px-4 rounded-md font-semibold hover:bg-blue-700 transition duration-300">
               Đăng ký khóa học
+            </Button> */}
+            <Button>
+              Đăng ký khoá học 
             </Button>
           </div>  
         </div>

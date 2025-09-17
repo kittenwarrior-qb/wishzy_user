@@ -25,63 +25,100 @@ Khóa học bao gồm:
 - Deploy ứng dụng lên cloud server
 
 Sau khi hoàn thành khóa học, bạn sẽ có đủ kỹ năng để ứng tuyển vào các vị trí Frontend Developer, Backend Developer hoặc Fullstack Developer.`,
-  modules: [
-    {
-      id: "1",
-      name: "HTML5 & CSS3 Nâng cao",
-      lessons: 12,
-      duration: "8 giờ",
-      price: 0,
-    },
-    {
-      id: "2",
-      name: "JavaScript Hiện đại",
-      lessons: 18,
-      duration: "12 giờ",
-      price: 500000,
-    },
-    {
-      id: "3",
-      name: "React.js Framework",
-      lessons: 15,
-      duration: "10 giờ",
-      price: 500000,
-    },
-    {
-      id: "4",
-      name: "Node.js & Express",
-      lessons: 14,
-      duration: "9 giờ",
-      price: 500000,
-    },
-  ],
-  instructors: [
-    {
-      id: "1",
-      name: "Huỳnh Duy Ánh",
-      specialty: "Frontend Developer",
-      avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg",
-    },
-  ],
-  reviews: [
-    {
-      id: "1",
-      rating: 5,
-      content:
-        "Khóa học rất chi tiết và dễ hiểu. Giảng viên giải thích rõ ràng và có nhiều ví dụ thực tế. Mình đã học được rất nhiều kiến thức bổ ích.",
-      author: "Nguyễn Minh Tú",
-      date: "2 tuần trước",
-    },
-    {
-      id: "2",
-      rating: 5,
-      content:
-        "Nội dung khóa học phong phú, bài tập thực hành sát với thực tế. Mình đã áp dụng được ngay những kiến thức đã học vào công việc.",
-      author: "Phạm Thu Hà",
-      date: "1 tháng trước",
-    },
-  ],
-};
+    modules: [
+      { 
+        id: "1", 
+        name: "HTML5 & CSS3 Nâng cao", 
+        lessons: 12, 
+        duration: "8 giờ",
+        price: 0
+      },
+      { 
+        id: "2", 
+        name: "JavaScript Hiện đại", 
+        lessons: 18, 
+        duration: "12 giờ",
+        price: 500000
+      },
+      { 
+        id: "3", 
+        name: "React.js Framework", 
+        lessons: 15, 
+        duration: "10 giờ",
+        price: 500000
+      },
+      { 
+        id: "4", 
+        name: "Node.js & Express", 
+        lessons: 14, 
+        duration: "9 giờ",
+        price: 500000
+      }
+    ],
+    instructors: [
+      { 
+        id: "1", 
+        name: "Huỳnh Duy Ánh", 
+        specialty: "Frontend Developer",
+        avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
+      },
+      // { 
+      //   id: "2", 
+      //   name: "Huỳnh Đông Quân", 
+      //   specialty: "Backend Developer",
+      //   avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
+      // },
+      // { 
+      //   id: "3", 
+      //   name: "Lê Thị Phương Hoài", 
+      //   specialty: "Fullstack Developer",
+      //   avatar: "https://aobongda.net/pic/Images/Module/News/images/t2.jpg"
+      // }
+    ],
+    reviews: [
+      {
+        id: "1",
+        rating: 5,
+        content: "Khóa học rất chi tiết và dễ hiểu. Giảng viên giải thích rõ ràng và có nhiều ví dụ thực tế. Mình đã học được rất nhiều kiến thức bổ ích.",
+        author: "Nguyễn Minh Tú",
+        date: "2 tuần trước"
+      },
+      {
+        id: "2",
+        rating: 5,
+        content: "Nội dung khóa học phong phú, bài tập thực hành sát với thực tế. Mình đã áp dụng được ngay những kiến thức đã học vào công việc.",
+        author: "Phạm Thu Hà",
+        date: "1 tháng trước"
+      }
+    ],
+   relatedCourses: [
+  {
+    id: "1",
+    name: "React Native Mobile Development",
+    info: "Cùng giảng viên • 45 giờ học",
+    img: "/images/courses/react-native.jpg", // ảnh thật
+  },
+  {
+    id: "2",
+    name: "Database Design & Optimization",
+    info: "Cùng chủ đề • 35 giờ học",
+    img: "/images/courses/database.jpg",
+  },
+  {
+    id: "3",
+    name: "Cloud Computing với AWS",
+    info: "Cùng chủ đề • 40 giờ học",
+    img: "/images/courses/cloud.jpg",
+  },
+  {
+    id: "4",
+    name: "React Native Mobile Development",
+    info: "Cùng giảng viên • 45 giờ học",
+    img: "/images/courses/react2.jpg",
+  },
+],
+  };
+
 
 const CourseDetailPage = () => {
   return <CourseDetailLayout course={courseData} />;
