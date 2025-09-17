@@ -22,18 +22,18 @@
 //             <AboutSection description={course.description} />
 //         </div>
 //         <div className="w-full md:w-1/3">
-         
+
 //           <StaffSection  />
 //         </div>
 //       </div>
-    
+
 //       {/* <CourseDetailPage /> */}
-//       <ReviewsSection 
-//         reviews={course.reviews} 
-//         rating={course.rating} 
-//         totalReviews={course.totalReviews} 
+//       <ReviewsSection
+//         reviews={course.reviews}
+//         rating={course.rating}
+//         totalReviews={course.totalReviews}
 //       />
-     
+
 //       <NearbyLocationsSection relatedCourses={course.relatedCourses} />
 //       {/* <ContentDisplaySection course={course} /> */}
 //     </div>
@@ -42,7 +42,7 @@
 
 // export default CourseDetailLayout;
 
-'use client'
+"use client";
 
 import React from "react";
 import CourseHeader from "./CourseHeader";
@@ -62,7 +62,7 @@ const CourseDetailLayout = ({ course }: { course: CourseDetail }) => {
           <CourseHeader course={course} />
           <ServicesSection services={course.modules} />
         </div>
-        
+
         {/* Cột phải - chứa AboutSection và StaffSection */}
         <div className="w-full md:w-1/3 space-y-8">
           <StaffSection />
@@ -72,10 +72,10 @@ const CourseDetailLayout = ({ course }: { course: CourseDetail }) => {
 
       {/* Các section riêng biệt bên ngoài container flex */}
       <div className="w-full max-w-[1280px] mx-auto ">
-        <ReviewsSection 
-          reviews={course.reviews} 
-          rating={course.rating} 
-          totalReviews={course.totalReviews} 
+        <ReviewsSection
+          reviews={course.reviews}
+          rating={course.rating}
+          totalReviews={course.totalReviews}
         />
       </div>
 
