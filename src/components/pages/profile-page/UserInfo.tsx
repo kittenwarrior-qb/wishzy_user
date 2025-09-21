@@ -1,38 +1,83 @@
 "use client";
 import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit2, UserCheck, BadgeCheck, User, CheckCircle2, Settings } from "lucide-react";
+import {
+  Edit2,
+  UserCheck,
+  BadgeCheck,
+  User,
+  CheckCircle2,
+  Settings,
+} from "lucide-react";
+import { toast } from "sonner";
+import { useAuthStore } from "@/store/slices/auth";
+import Avatar from "@/assets/cv1.jpg";
 
 interface UserInfoProps {
   user: {
-    name: string;
+    fullName: string;
     email: string;
     phone: string;
     dob: string;
     gender: "Nam" | "Nữ" | "Khác";
-    avatarUrl: string;
+    avatar: string;
     isTeacher?: boolean;
   };
   handleChange: (field: string, value: string) => void;
+  onSave: () => void;
 }
 
-export default function UserInfo({ user, handleChange }: UserInfoProps) {
+export default function UserInfo({ user, handleChange, onSave }: UserInfoProps) {
+  const [previewAvatar, setPreviewAvatar] = useState<string>(user.avatar);
+
+  const handleUploadAvatar = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const token = useAuthStore.getState().token;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload/avatar`, {
+        method: "POST",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Upload avatar thành công");
+        setPreviewAvatar(data.url); 
+        handleChange("avatar", data.url); 
+      } else {
+        toast.error(data.message || "Upload thất bại");
+      }
+    } catch (error) {
+      toast.error("Upload thất bại");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold">Thông tin cá nhân</h2>
-            <User className="text-amber-500" size={20} />
+          <User className="text-amber-500" size={32} />
+          <h2 className="text-lg font-semibold">Thông tin cá nhân</h2> 
         </div>
         <Button variant="outline" className="flex items-center gap-1">
           <Settings size={16} /> Tùy chỉnh
         </Button>
       </div>
 
+      {/* Avatar + Info */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="relative w-24 h-24">
           <Image
-            src={user.avatarUrl}
+            src={Avatar.src }
             alt="Avatar"
             width={96}
             height={96}
@@ -40,13 +85,20 @@ export default function UserInfo({ user, handleChange }: UserInfoProps) {
           />
           <label className="absolute bottom-0 right-0 rounded-full p-1 shadow cursor-pointer bg-white hover:bg-gray-100">
             <Edit2 size={16} />
-            <input type="file" className="hidden" aria-label="Upload avatar" />
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files?.[0]) handleUploadAvatar(e.target.files[0]);
+              }}
+            />
           </label>
         </div>
 
         <div className="flex-1">
           <div className="flex items-center flex-wrap gap-2">
-            <span className="font-semibold text-xl">{user.name}</span>
+            <span className="font-semibold text-xl">{user.fullName}</span>
             <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-amber-500 text-xs font-medium">
               {user.isTeacher ? "Giảng viên" : "Học viên"}
             </span>
@@ -54,17 +106,20 @@ export default function UserInfo({ user, handleChange }: UserInfoProps) {
               <BadgeCheck size={14} /> Verified
             </span>
           </div>
-          <p className="text-sm mt-1">{user.email} • {user.phone}</p>
+          <p className="text-sm mt-1">
+            {user.email} • {user.phone}
+          </p>
         </div>
       </div>
 
+      {/* Form fields */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Họ và tên"
           className="w-full border border-gray-300 rounded px-3 py-2"
-          value={user.name}
-          onChange={(e) => handleChange("name", e.target.value)}
+          value={user.fullName}
+          onChange={(e) => handleChange("fullName", e.target.value)}
         />
         <input
           type="text"
@@ -78,7 +133,7 @@ export default function UserInfo({ user, handleChange }: UserInfoProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <input
           type="text"
-          placeholder="Phone"
+          placeholder="Số điện thoại"
           className="w-full border border-gray-300 rounded px-3 py-2"
           value={user.phone}
           onChange={(e) => handleChange("phone", e.target.value)}
@@ -89,6 +144,7 @@ export default function UserInfo({ user, handleChange }: UserInfoProps) {
           value={user.dob}
           onChange={(e) => handleChange("dob", e.target.value)}
         />
+        <p>{user.dob}</p>
         <div className="flex items-center gap-4">
           {["Nam", "Nữ", "Khác"].map((g) => (
             <label key={g} className="flex items-center gap-1 text-sm">
@@ -107,7 +163,7 @@ export default function UserInfo({ user, handleChange }: UserInfoProps) {
       </div>
 
       <div className="flex justify-end">
-        <Button variant="default" className="flex items-center gap-1">
+        <Button variant="default" className="flex items-center gap-1" onClick={onSave}>
           <CheckCircle2 size={16} /> Lưu thay đổi
         </Button>
       </div>

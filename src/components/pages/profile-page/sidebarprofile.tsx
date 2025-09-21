@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useSelectedLayoutSegment } from "next/navigation";
 import {
   Home,
@@ -11,11 +10,11 @@ import {
   Shield,
   Heart,
   Menu,
-  X,
-  BadgeCheck,
+  X
 } from "lucide-react";
+import Image from "next/image";
+import Logo from "@/assets/wishzy-logo.png";
 import { Button } from "@/components/ui/button";
-import Avatar from "@/assets/cv1.jpg";
 import { useState } from "react";
 
 const studentMenu = [
@@ -28,7 +27,7 @@ const studentMenu = [
 ];
 
 interface MenuProfileProps {
-  variant: "sidebar" | "mobile";
+  variant: "sidebar" | "mobile" | "toggle";
 }
 
 export default function MenuProfile({ variant }: MenuProfileProps) {
@@ -39,6 +38,40 @@ export default function MenuProfile({ variant }: MenuProfileProps) {
     if (href === "/profile") return segment === null;
     return segment ? href.includes(segment) : false;
   };
+
+  if (variant === "toggle") {
+    return (
+      <>
+        <Button onClick={() => setIsOpen(true)} variant="outline" size="icon">
+          <Menu size={22} />
+        </Button>
+
+        <div
+          className={`fixed inset-0 z-40 transition-opacity lg:hidden ${
+            isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setIsOpen(false)}
+        ></div>
+
+        <aside
+          className={`fixed top-0 left-0 h-full w-72 bg-white shadow-lg p-6 z-50 transform transition-transform lg:hidden ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex justify-between p-4">
+            <div className="logo mb-8 ">
+                <Image src={Logo.src || Logo} alt="Wishzy Logo" width={120} height={40} />
+            </div>
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              <X size={24} />
+            </Button>
+          </div>
+          <MenuProfileContent />
+        </aside>
+      </>
+    );
+  }
+
 
   if (variant === "mobile") {
     return (
@@ -53,7 +86,7 @@ export default function MenuProfile({ variant }: MenuProfileProps) {
                   {active ? (
                     <Button
                       variant="default"
-                      className="rounded-full w-14 h-14 -translate-y-3 shadow-lg scale-110 transition-all duration-300 flex items-center justify-center"
+                      className="rounded-full w-14 h-14 bg-amber-500 -translate-y-3 shadow-lg scale-110 transition-all duration-300 flex items-center justify-center"
                     >
                       <Icon size={26} className="text-white size-8" />
                     </Button>
@@ -117,27 +150,8 @@ function MenuProfileContent() {
   };
 
   return (
-    <aside className="flex flex-col shadow-sm h-screen border-r border-white sticky top-0">
-      <div className="flex items-center gap-3 p-6 pt-0">
-        <Image
-          src={Avatar.src || Avatar}
-          alt="Avatar"
-          width={48}
-          height={48}
-          className="rounded-full border border-gray-300 object-cover"
-        />
-        <div>
-          <h2 className="font-semibold flex items-center gap-1">
-            Hồ Văn Duy
-            <span className=" bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1 shadow">
-              <BadgeCheck size={12} className="mr-1" /> Verified
-            </span>
-          </h2>
-          <p className="text-sm ">Học viên</p>
-        </div>
-      </div>
-
-      <ul className="space-y-2 flex-1 overflow-y-auto px-6 hide-scrollbar py-4">
+    <aside className="flex flex-col border-r border-white sticky top-0">
+      <ul className="space-y-2 flex-1 overflow-y-auto border-none pr-6 hide-scrollbar py-4">
         {studentMenu.map((item, idx) => {
           const Icon = item.icon;
           const active = isActive(item.href);
