@@ -42,8 +42,8 @@
 
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export default function KhoaHocLienQuan() {
   const courses = [
@@ -74,7 +74,7 @@ export default function KhoaHocLienQuan() {
   ]
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="">
       {/* Tiêu đề section */}
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
         📚 Khóa học liên quan
@@ -94,10 +94,10 @@ export default function KhoaHocLienQuan() {
               <CardDescription className="text-gray-500 text-sm">{course.info}</CardDescription>
             </CardHeader>
             <CardContent>
-            <Button className="w-35 bg-primary text-white py-2 px-4 rounded-md font-semibold hover:bg-blue-700 transition duration-300">
+            <Button>
               Xem chi tiết
             </Button>  
-            </CardContent>
+            </CardContent>  
           </Card>
         ))}
       </div>
