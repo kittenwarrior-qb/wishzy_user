@@ -19,7 +19,14 @@
   "AboutPage": {
     "title": "Wishzy - Tìm khóa học, luyện đề thi trực tuyến!",
     "description": "Khám phá hàng triệu khóa học trực tuyến và luyện đề thi miễn phí. Nâng cao kỹ năng của bạn với Wishzy ngay hôm nay!"
-
+  },
+  "Cart": {
+    "title": "Giỏ hàng - Wishzy",
+    "description": "Xem và quản lý các khóa học trong giỏ hàng của bạn"
+  },
+  "Order": {
+    "title": "Đặt hàng - Wishzy",
+    "description": "Hoàn tất đơn hàng và thanh toán"
   }
 }
 
