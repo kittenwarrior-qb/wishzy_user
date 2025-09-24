@@ -16,54 +16,84 @@ export type GetCourseListParams = {
 
 export const CourseService = {
   getHotCourse: async (): Promise<CourseListResponse> => {
-    const res = await fetch(`${apiUrl}/course/hot-course`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      next: { revalidate: 60 },
-    });
+    try {
+      const res = await fetch(`${apiUrl}/course/hot-course`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        next: { revalidate: 60 },
+      });
 
-    if (!res.ok) throw new Error("Failed to fetch hot courses");
+      if (!res.ok) {
+        throw new Error(`Failed to fetch hot courses: ${res.status} ${res.statusText}`);
+      }
 
-    const data = await res.json();
-    return courseListResponseSchema.parse(data);
+      const data = await res.json();
+      return courseListResponseSchema.parse(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Hot courses service error: ${error.message}`);
+      }
+      throw new Error("Unknown error occurred while fetching hot courses");
+    }
   },
 
   getCourseList: async (
     params?: GetCourseListParams
   ): Promise<CourseListResponse> => {
-    const query = new URLSearchParams(
-      Object.entries(params ?? {})
-        .filter(([_, v]) => v !== undefined)
-        .map(([k, v]) => [k, String(v)])
-    );
+    try {
+      const query = new URLSearchParams(
+        Object.entries(params ?? {})
+          .filter(([_, v]) => v !== undefined && v !== null && v !== "")
+          .map(([k, v]) => [k, String(v)])
+      );
 
-    const url = `${apiUrl}/course${
-      query.toString() ? `?${query.toString()}` : ""
-    }`;
+      const url = `${apiUrl}/course${
+        query.toString() ? `?${query.toString()}` : ""
+      }`;
 
-    const res = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      next: { revalidate: 60 },
-    });
+      const res = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        next: { revalidate: 60 },
+      });
 
-    if (!res.ok) throw new Error("Failed to fetch course list");
+      if (!res.ok) {
+        throw new Error(`Failed to fetch course list: ${res.status} ${res.statusText}`);
+      }
 
-    const data = await res.json();
-    return courseListResponseSchema.parse(data);
+      const data = await res.json();
+      return courseListResponseSchema.parse(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Course list service error: ${error.message}`);
+      }
+      throw new Error("Unknown error occurred while fetching course list");
+    }
   },
 
   getCourseBySlug: async (slug: string): Promise<CourseDetailResponse> => {
-    debugger;
-    const res = await fetch(`${apiUrl}/course/${slug}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      next: { revalidate: 60 },
-    });
+    try {
+      if (!slug || slug.trim() === "") {
+        throw new Error("Course slug is required");
+      }
 
-    if (!res.ok) throw new Error(`Failed to fetch course: ${slug}`);
+      const res = await fetch(`${apiUrl}/course/${encodeURIComponent(slug)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        next: { revalidate: 60 },
+      });
 
-    const data = await res.json();
-    return courseDetailResponseSchema.parse(data);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch course "${slug}": ${res.status} ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      return courseDetailResponseSchema.parse(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Course detail service error: ${error.message}`);
+      }
+      throw new Error(`Unknown error occurred while fetching course: ${slug}`);
+    }
   },
 };

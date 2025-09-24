@@ -4,10 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { CourseDetail } from "@/types/schema/course.schema";
+import { CourseList } from "@/types/schema/course.schema";
 import { AnimatedLink } from "./animated-link";
 
-const CourseCard = ({ course }: { course: CourseDetail }) => {
+const CourseCard = ({ course }: { course: CourseList }) => {
+  if (!course) return null;
+
   const {
     courseName,
     description,
@@ -45,9 +47,11 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
           />
           {/* Badge + Rating chỉ hiện ở sm trở lên */}
           <div className="hidden sm:flex absolute top-2 right-2 gap-2">
-            <Button variant={"outline"} className="!text-[12px]">
-              {subject?.subjectName}
-            </Button>
+            {subject?.subjectName && (
+              <Button variant={"outline"} className="!text-[12px]">
+                {subject.subjectName}
+              </Button>
+            )}
             <Button variant={"outline"} className="!text-[12px]">
               {level}
             </Button>
@@ -73,7 +77,7 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
           <div className="flex items-center gap-[7px]">
             <Avatar className="w-6 h-6 bg-neutral-200" />
             <span className="text-muted-foreground text-sm">
-              {createdBy.fullName || "Tác giả"}
+              {createdBy?.fullName || "Tác giả"}
             </span>
           </div>
           <span className="text-muted-foreground text-xs sm:text-sm">
@@ -89,7 +93,7 @@ const CourseCard = ({ course }: { course: CourseDetail }) => {
 
         <p className="text-xs sm:text-sm leading-[18px] sm:leading-[21px] flex-1">
           <span className="text-foreground line-clamp-2 sm:line-clamp-3 block">
-            {description}
+            {description || "Không có mô tả"}
           </span>
         </p>
 
