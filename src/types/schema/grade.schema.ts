@@ -15,5 +15,10 @@ export const gradeListResponseSchema = msgSchema.extend({
   pagination: paginationSchema
 });
 
+export const gradeDetailResponseSchema = msgSchema.extend({
+  grade: gradeSchema
+});
+
 export type Grade = z.infer<typeof gradeSchema>;
 export type GradeListResponse = z.infer<typeof gradeListResponseSchema>;
+export type GradeDetailResponse = z.infer<typeof gradeDetailResponseSchema>;
