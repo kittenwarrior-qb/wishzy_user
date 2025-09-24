@@ -1,6 +1,6 @@
 'use client';
 
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore } from "@/store/slices/cart";
 import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
@@ -9,7 +9,7 @@ interface CartIconProps {
 }
 
 export default function CartIcon({ className = '' }: CartIconProps) {
-  const { getItemCount } = useCart();
+  const { getItemCount } = useCartStore();
   const itemCount = getItemCount();
 
   return (

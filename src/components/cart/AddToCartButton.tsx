@@ -1,7 +1,7 @@
 'use client';
 
 import { useAddToCart } from '@/hooks/useAddToCart';
-import { CartItem } from '@/contexts/CartContext';
+import { CartItem } from "@/store/slices/cart";
 import { ShoppingCart, Plus } from 'lucide-react';
 
 interface AddToCartButtonProps {

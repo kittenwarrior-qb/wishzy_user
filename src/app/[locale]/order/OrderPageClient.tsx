@@ -1,11 +1,12 @@
 'use client';
 
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/slices/cart";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { CreditCard, Truck, MapPin, User, Mail, Phone, ArrowLeft } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { CreditCard, MapPin, User, Mail, Phone, ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
-import { CartItem } from "@/contexts/CartContext";
+import { CartItem } from "@/store/slices/cart";
 
 interface UserInfo {
   fullName: string;
@@ -33,8 +34,10 @@ function formatPrice(price: number): string {
 }
 
 export default function OrderPageClient() {
-  const { items, subtotal, discount, total, clearCart } = useCart();
+  const { items, subtotal, discount, total, clearCart, replaceCart } = useCartStore();
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = (pathname?.split('/')?.[1] || 'vi');
   
   const [userInfo, setUserInfo] = useState<UserInfo>({
     fullName: '',
@@ -46,12 +49,24 @@ export default function OrderPageClient() {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'momo'>('cod');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Redirect nếu cart trống
+  // Hydrate giỏ hàng từ checkout_items nếu Zustand rỗng, sau đó mới quyết định redirect
   useEffect(() => {
-    if (items.length === 0) {
-      router.push('/cart');
+    if (items.length > 0) return; // đã có giỏ hàng
+    try {
+      const rawItems = localStorage.getItem('checkout_items');
+      if (rawItems) {
+        const parsedItems = JSON.parse(rawItems) as CartItem[];
+        if (Array.isArray(parsedItems) && parsedItems.length > 0) {
+          replaceCart(parsedItems);
+          return; // đã hydrate, không redirect
+        }
+      }
+      // nếu không hydrate được thì redirect về cart để thêm sản phẩm
+      router.push(`/${locale}/cart`);
+    } catch {
+      router.push(`/${locale}/cart`);
     }
-  }, [items.length, router]);
+  }, [items.length, router, locale, replaceCart]);
 
   const handleInputChange = (field: keyof UserInfo, value: string) => {
     setUserInfo(prev => ({
@@ -125,10 +140,10 @@ export default function OrderPageClient() {
         // Simulate MoMo payment redirect
         toast.info('Đang chuyển hướng đến MoMo...');
         setTimeout(() => {
-          router.push(`/order-success?id=${orderId}&payment=momo`);
+          router.push(`/${locale}/order-success?id=${orderId}&payment=momo`);
         }, 1500);
       } else {
-        router.push(`/order-success?id=${orderId}&payment=cod`);
+        router.push(`/${locale}/order-success?id=${orderId}&payment=cod`);
       }
       
     } catch (error) {
@@ -146,7 +161,7 @@ export default function OrderPageClient() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">Giỏ hàng trống</h2>
           <p className="text-gray-600 mb-4">Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng</p>
           <button
-            onClick={() => router.push('/cart')}
+            onClick={() => router.push(`/${locale}/cart`)}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Quay lại giỏ hàng
@@ -258,12 +273,12 @@ export default function OrderPageClient() {
               
               <div className="space-y-3">
                 {/* COD */}
-                <div 
+                {/* <div 
                   className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                     paymentMethod === 'cod' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => setPaymentMethod('cod')}
-                >
+                  >
                   <div className="flex items-center gap-3">
                     <input
                       type="radio"
@@ -279,7 +294,7 @@ export default function OrderPageClient() {
                       <div className="text-sm text-gray-500">Thanh toán bằng tiền mặt khi nhận khóa học</div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* MoMo */}
                 <div 
@@ -317,15 +332,17 @@ export default function OrderPageClient() {
               
               {/* Danh sách sản phẩm */}
               <div className="space-y-4 mb-6">
-                {items.map((item) => (
-                  <div key={item.id} className="flex gap-3">
+                {items.map((item: CartItem) => (
+                  <div key={item._id} className="flex gap-3">
                     <img
-                      src={item.image}
-                      alt={item.title}
+                      src={item.thumbnail}
+                      alt={item.courseName}
+                      width={64}
+                      height={64}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h4 className="font-medium text-sm line-clamp-2">{item.title}</h4>
+                      <h4 className="font-medium text-sm line-clamp-2">{item.courseName}</h4>
                       <p className="text-xs text-gray-500">{item.instructor}</p>
                       <div className="flex justify-between items-center mt-1">
                         <span className="text-xs text-gray-500">x{item.quantity}</span>
