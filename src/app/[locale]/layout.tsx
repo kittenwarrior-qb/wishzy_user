@@ -11,7 +11,7 @@ type LocaleLayoutProps = {
   headerVariant: string 
 };
 
-export default async function LocaleLayout({ children, params, headerVariant = 'guest', }: LocaleLayoutProps) {
+export default async function LocaleLayout({ children, params}: LocaleLayoutProps) {
   const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {
@@ -25,7 +25,7 @@ export default async function LocaleLayout({ children, params, headerVariant = '
     <NextIntlClientProvider locale={locale} messages={messages}>
       <Header />
       {children}
-      {/* <Footer /> */}
+      <Footer />
     </NextIntlClientProvider>
   );
 }
