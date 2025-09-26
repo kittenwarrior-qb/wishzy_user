@@ -5,9 +5,9 @@ export const gradeSchema = z.object({
   _id: z.string(),
   gradeName: z.string(),
   status: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  slug: z.string(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+  slug: z.string().optional(),
 });
 
 export const gradeListResponseSchema = msgSchema.extend({
