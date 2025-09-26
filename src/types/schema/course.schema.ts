@@ -21,6 +21,8 @@ const createdBySchema = userSchema.pick({
   _id: true,
   email: true,
   fullName: true
+}).extend({
+  avatar: z.string().optional()
 });
 
 const baseCourseSchema = z.object({
@@ -34,7 +36,7 @@ const baseCourseSchema = z.object({
   requirements: z.array(z.string()).optional(),
   totalDuration: z.number(),
   subject: subjectRefSchema.optional(),
-  createdBy: createdBySchema,
+  createdBy: createdBySchema.nullable(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
   slug: z.string(),
