@@ -45,6 +45,7 @@ interface CartActions {
   getItemCount: () => number;
   calculateTotals: () => void;
   replaceCart: (items: CartItem[]) => void;
+  hasItem: (_id: string) => boolean;
 }
 
 type CartStore = CartState & CartActions;
@@ -78,9 +79,10 @@ export const useCartStore = create<CartStore>()(
         
         let newItems: CartItem[];
         if (existingItem) {
+          // Do not increase beyond 1; keep exactly 1 per user as business rule
           newItems = items.map(cartItem =>
             cartItem._id === item._id
-              ? { ...cartItem, quantity: cartItem.quantity + 1 }
+              ? { ...cartItem, quantity: 1 }
               : cartItem
           );
         } else {
@@ -146,6 +148,11 @@ export const useCartStore = create<CartStore>()(
       getItemCount: () => {
         const { items } = get();
         return items.reduce((count, item) => count + item.quantity, 0);
+      },
+
+      hasItem: (_id) => {
+        const { items } = get();
+        return items.some(item => item._id === _id);
       },
 
       calculateTotals: () => {

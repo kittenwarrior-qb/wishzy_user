@@ -4,10 +4,14 @@ import { useCartStore, CartItem } from "@/store/slices/cart";
 import { toast } from 'sonner';
 
 export function useAddToCart() {
-  const { addItem } = useCartStore();
+  const { addItem, hasItem } = useCartStore();
 
   const addToCart = (product: Omit<CartItem, 'quantity'>) => {
     try {
+      if (hasItem(product._id)) {
+        toast.info(`Khoá học "${product.courseName}" đã có trong giỏ hàng`);
+        return;
+      }
       addItem(product);
       toast.success(`Đã thêm "${product.courseName}" vào giỏ hàng!`);
     } catch (error) {

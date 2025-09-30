@@ -34,14 +34,12 @@ const CourseCard = ({ course }: { course: CourseList }) => {
     >
       <AnimatedLink href={`/course/${slug}`} className="flex-shrink-0">
         <div className="relative w-[120px] h-[120px] sm:w-full sm:h-[185px] bg-muted overflow-hidden">
-          <Image
+          <img
             src={
               thumbnail ||
               "https://res.cloudinary.com/djuksxdrw/image/upload/v1754109827/cardpng_nzmt5j.png"
             }
             alt={courseName}
-            fill
-            priority
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover transition-transform duration-300 ease-in-out"
           />

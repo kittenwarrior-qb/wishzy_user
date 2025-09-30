@@ -4,8 +4,7 @@ import { useCartStore } from "@/store/slices/cart";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { CartService, Course } from "@/services/cart.service";
+ 
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -22,41 +21,12 @@ export default function CartPageClient() {
     total, 
     removeItem, 
     updateQuantity, 
-    clearCart, 
-    addItem 
+    clearCart 
   } = useCartStore();
   const router = useRouter();
   const pathname = usePathname();
   const locale = (pathname?.split('/')?.[1] || 'vi');
-  const [loading, setLoading] = useState(true);
-
-  // Load sample courses from API when cart is empty
-  useEffect(() => {
-    const loadSampleCourses = async () => {
-      try {
-        if (items.length === 0) {
-          const response = await CartService.getCourseList({ limit: 3 });
-          const coursesData = response.courses || [];
-          
-          // Convert API courses to cart items format
-          coursesData.forEach((course: Course) => {
-            const cartItem = {
-              ...course,
-              instructor: course?.createdBy?.fullName ?? 'Giảng viên',
-              originalPrice: course.price * 1.5, // Mock original price
-            };
-            addItem(cartItem);
-          });
-        }
-      } catch (error) {
-        console.error('Error loading courses:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSampleCourses();
-  }, [items.length, addItem]);
+  // Cart page should only reflect items that user explicitly added to cart (persisted by Zustand)
 
   const handleQuantityDecrease = (_id: string, currentQuantity: number) => {
     if (currentQuantity > 1) {
@@ -96,17 +66,6 @@ export default function CartPageClient() {
   const handleExploreCourses = () => {
     router.push(`/${locale}/courses`);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang tải...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -150,13 +109,15 @@ export default function CartPageClient() {
                     {items.map((item) => (
                       <div key={item._id} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg">
                         <div className="flex-shrink-0">
-                          <img
-                            src={item.thumbnail || '/placeholder-course.jpg'}
-                            alt={item.courseName}
-                            width={96}
-                            height={64}
-                            className="w-24 h-16 object-cover rounded-lg"
-                          />
+                          <div className="relative w-24 h-16">
+                            <img
+                              src={item.thumbnail || '/placeholder-course.jpg'}
+                              alt={item.courseName}
+                              width={96}
+                              height={96}
+                              className="object-cover rounded-lg"
+                            />
+                          </div>
                         </div>
                         
                         <div className="flex-1 min-w-0">
