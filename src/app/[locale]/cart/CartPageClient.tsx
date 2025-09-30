@@ -1,44 +1,10 @@
 'use client';
 
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/slices/cart";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-// Dữ liệu mẫu - sau này thay bằng API
-const sampleCartData = [
-  {
-    id: 1,
-    title: "Khóa học React từ cơ bản đến nâng cao",
-    instructor: "Nguyễn Văn A",
-    price: 299000,
-    originalPrice: 599000,
-    image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=250&fit=crop",
-    duration: "40 giờ",
-    lessons: 120,
-  },
-  {
-    id: 2,
-    title: "JavaScript ES6+ và Modern Web Development",
-    instructor: "Trần Thị B",
-    price: 199000,
-    originalPrice: 399000,
-    image: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&h=250&fit=crop",
-    duration: "30 giờ",
-    lessons: 85,
-  },
-  {
-    id: 3,
-    title: "UI/UX Design với Figma",
-    instructor: "Lê Văn C",
-    price: 249000,
-    originalPrice: 499000,
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=250&fit=crop",
-    duration: "25 giờ",
-    lessons: 60,
-  },
-];
+import { usePathname, useRouter } from "next/navigation";
+ 
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -48,32 +14,34 @@ function formatPrice(price: number): string {
 }
 
 export default function CartPageClient() {
-  const { items, subtotal, discount, total, removeItem, updateQuantity, clearCart, addItem } = useCart();
+  const { 
+    items, 
+    subtotal, 
+    discount, 
+    total, 
+    removeItem, 
+    updateQuantity, 
+    clearCart 
+  } = useCartStore();
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = (pathname?.split('/')?.[1] || 'vi');
+  // Cart page should only reflect items that user explicitly added to cart (persisted by Zustand)
 
-  // Thêm dữ liệu mẫu vào cart khi component mount (chỉ nếu cart trống)
-  useEffect(() => {
-    if (items.length === 0) {
-      sampleCartData.forEach(item => {
-        addItem(item);
-      });
-    }
-  }, [items.length, addItem]);
-
-  const handleQuantityDecrease = (id: number, currentQuantity: number) => {
+  const handleQuantityDecrease = (_id: string, currentQuantity: number) => {
     if (currentQuantity > 1) {
-      updateQuantity(id, currentQuantity - 1);
+      updateQuantity(_id, currentQuantity - 1);
     } else {
-      removeItem(id);
+      removeItem(_id);
     }
   };
 
-  const handleQuantityIncrease = (id: number, currentQuantity: number) => {
-    updateQuantity(id, currentQuantity + 1);
+  const handleQuantityIncrease = (_id: string, currentQuantity: number) => {
+    updateQuantity(_id, currentQuantity + 1);
   };
 
-  const handleRemoveItem = (id: number) => {
-    removeItem(id);
+  const handleRemoveItem = (_id: string) => {
+    removeItem(_id);
   };
 
   const handleProceedToCheckout = () => {
@@ -87,16 +55,16 @@ export default function CartPageClient() {
       }));
       
       // Navigate to order/checkout page
-      router.push('/order');
+      router.push(`/${locale}/order`);
     }
   };
 
   const handleContinueShopping = () => {
-    router.push('/courses');
+    router.push(`/${locale}/courses`);
   };
 
   const handleExploreCourses = () => {
-    router.push('/courses');
+    router.push(`/${locale}/courses`);
   };
 
   return (
@@ -128,7 +96,7 @@ export default function CartPageClient() {
               <div className="bg-white rounded-lg shadow-sm">
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">Khóa học đã chọn</h2>
+                    <h2 className="text-xl font-semibold text-gray-900">Khóa học đã chọn</h2>
                     <button
                       onClick={clearCart}
                       className="text-red-600 hover:text-red-700 text-sm font-medium"
@@ -136,65 +104,71 @@ export default function CartPageClient() {
                       Xóa tất cả
                     </button>
                   </div>
-                  
+
                   <div className="space-y-6">
                     {items.map((item) => (
-                      <div key={item.id} className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-lg">
-                        {/* Course Image */}
+                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg">
                         <div className="flex-shrink-0">
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            width={200}
-                            height={120}
-                            className="w-full sm:w-48 h-32 object-cover rounded-lg"
-                          />
+                          <div className="relative w-24 h-16">
+                            <img
+                              src={item.thumbnail || '/placeholder-course.jpg'}
+                              alt={item.courseName}
+                              width={96}
+                              height={96}
+                              className="object-cover rounded-lg"
+                            />
+                          </div>
                         </div>
                         
-                        {/* Course Info */}
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
-                          <p className="text-gray-600 mb-2">Giảng viên: {item.instructor}</p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                            <span>{item.duration}</span>
-                            <span>•</span>
-                            <span>{item.lessons} bài học</span>
-                          </div>
-                          
-                          {/* Price and Actions */}
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                              <span className="text-2xl font-bold text-blue-600">{formatPrice(item.price)}</span>
-                              {item.originalPrice > item.price && (
-                                <span className="text-lg text-gray-400 line-through">{formatPrice(item.originalPrice)}</span>
-                              )}
-                            </div>
-                            
-                            <div className="flex items-center gap-3">
-                              {/* Quantity Controls */}
-                              <div className="flex items-center border border-gray-300 rounded-lg">
-                                <button 
-                                  onClick={() => handleQuantityDecrease(item.id, item.quantity)}
-                                  className="p-2 hover:bg-gray-100 transition-colors"
-                                >
-                                  <Minus className="h-4 w-4" />
-                                </button>
-                                <span className="px-4 py-2 font-medium">{item.quantity}</span>
-                                <button 
-                                  onClick={() => handleQuantityIncrease(item.id, item.quantity)}
-                                  className="p-2 hover:bg-gray-100 transition-colors"
-                                >
-                                  <Plus className="h-4 w-4" />
-                                </button>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-medium text-gray-900 mb-1">
+                                {item.courseName}
+                              </h3>
+                              <p className="text-sm text-gray-600 mb-2">Giảng viên: {item.instructor}</p>
+                              
+                              <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                                <span>{item.totalDuration} giờ</span>
+                                <span>•</span>
+                                <span>Level: {item.level}</span>
+                                <span>•</span>
+                                <span>{item.numberOfStudents} học viên</span>
                               </div>
                               
-                              {/* Remove Button */}
-                              <button 
-                                onClick={() => handleRemoveItem(item.id)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                title="Xóa khỏi giỏ hàng"
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg font-bold text-blue-600">
+                                  {formatPrice(item.price)}
+                                </span>
+                                {item.originalPrice && item.originalPrice > item.price && (
+                                  <span className="text-sm text-gray-500 line-through">
+                                    {formatPrice(item.originalPrice)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center space-x-3 ml-4">
+                              <button
+                                onClick={() => handleQuantityDecrease(item._id, item.quantity)}
+                                className="p-1 rounded-full hover:bg-gray-100"
                               >
-                                <Trash2 className="h-5 w-5" />
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <span className="font-medium text-gray-900 min-w-[2rem] text-center">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() => handleQuantityIncrease(item._id, item.quantity)}
+                                className="p-1 rounded-full hover:bg-gray-100"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleRemoveItem(item._id)}
+                                className="p-1 rounded-full hover:bg-red-50 text-red-600 ml-2"
+                              >
+                                <Trash2 className="h-4 w-4" />
                               </button>
                             </div>
                           </div>
