@@ -1,13 +1,5 @@
-import HotListSection from "@/components/pages/home-page/hot-list-section";
-import AboutSection from "@/components/pages/home-page/about-section";
-import CategorySection from "@/components/pages/home-page/category-section";
-import ContactSection from "@/components/pages/home-page/contact-section";
-import ResultSection from "@/components/pages/home-page/result-section";
-import TestimonialSection from "@/components/pages/home-page/testimonial-section";
-import TutorialSection from "@/components/pages/home-page/tutorial-section";
+import HomePageClient from "@/components/pages/home-page/home-page-client";
 import { genPageMetadata } from "@/app/seo";
-import CourseDecision from "@/components/pages/home-page/course-decision-section";
-import BannerSection from "@/components/pages/home-page/banner-section";
 
 async function fetchBannerImages() {
   return [
@@ -34,18 +26,6 @@ export async function generateMetadata({
   });
 }
 
-export default async function HomePage() {
-  return (
-    <div>
-      <BannerSection/>
-      <HotListSection />
-      <CategorySection />
-      <ResultSection />
-      <CourseDecision />
-      <TestimonialSection />
-      <TutorialSection />
-      <ContactSection />
-      <AboutSection />
-    </div>
-  );
+export default function HomePage() {
+  return <HomePageClient />;
 }

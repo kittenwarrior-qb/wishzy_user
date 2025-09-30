@@ -12,6 +12,12 @@ export type GetCourseListParams = {
   page?: number;
   limit?: number;
   grade?: string;
+  maxPrice?: number;
+  minPrice?: number;
+  rating?: number;
+  level?: string;
+  sortBy?: 'newest' | 'price_asc' | 'price_desc' | 'popular';
+  orderDate?: number; 
 };
 
 export const CourseService = {

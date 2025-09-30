@@ -76,7 +76,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-[500px]">
+    <div className="min-h-[100vh] flex items-center">
       <div className="max-w-[1280px] mx-auto grid grid-cols-2 py-20">
         <div>Trai</div>
         <div className="flex justify-center">
