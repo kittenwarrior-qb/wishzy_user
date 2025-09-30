@@ -4,9 +4,10 @@ import { useCartStore } from "@/store/slices/cart";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { CreditCard, MapPin, User, Mail, Phone, ArrowLeft } from "lucide-react";
-import Image from "next/image";
 import { toast } from "sonner";
 import { CartItem } from "@/store/slices/cart";
+import { PaymentService } from "@/services/payment.service";
+import { useAuthStore } from "@/store/slices/auth";
 
 interface UserInfo {
   fullName: string;
@@ -18,7 +19,7 @@ interface UserInfo {
 interface OrderData {
   items: CartItem[];
   userInfo: UserInfo;
-  paymentMethod: 'cod' | 'momo';
+  paymentMethod: 'cod' | 'vnpay';
   totals: {
     subtotal: number;
     discount: number;
@@ -46,8 +47,9 @@ export default function OrderPageClient() {
     address: ''
   });
   
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'momo'>('cod');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'vnpay'>('vnpay');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { token } = useAuthStore();
 
   // Hydrate giỏ hàng từ checkout_items nếu Zustand rỗng, sau đó mới quyết định redirect
   useEffect(() => {
@@ -92,60 +94,68 @@ export default function OrderPageClient() {
       toast.error('Vui lòng nhập địa chỉ');
       return false;
     }
-    
-    // Validate email format
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userInfo.email)) {
       toast.error('Email không hợp lệ');
       return false;
     }
-    
-    // Validate phone format
+
     const phoneRegex = /^[0-9]{10,11}$/;
     if (!phoneRegex.test(userInfo.phone.replace(/\s/g, ''))) {
       toast.error('Số điện thoại không hợp lệ');
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmitOrder = async () => {
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      const orderData: OrderData = {
-        items,
-        userInfo,
-        paymentMethod,
-        totals: { subtotal, discount, total }
-      };
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Save order to localStorage (thay bằng API call thực tế)
-      const orderId = Date.now().toString();
-      localStorage.setItem(`order_${orderId}`, JSON.stringify(orderData));
-      
-      // Clear cart
-      clearCart();
-      
-      toast.success('Đặt hàng thành công!');
-      
-      // Redirect based on payment method
-      if (paymentMethod === 'momo') {
-        // Simulate MoMo payment redirect
-        toast.info('Đang chuyển hướng đến MoMo...');
-        setTimeout(() => {
-          router.push(`/${locale}/order-success?id=${orderId}&payment=momo`);
-        }, 1500);
+      if (items.length !== 1) {
+        toast.error('Vui lòng thanh toán 1 khóa học mỗi lần.');
+        return;
+      }
+
+      const courseId = items[0]._id;
+
+      if (paymentMethod === 'vnpay') {
+        if (!token) {
+          toast.error('Bạn cần đăng nhập để thanh toán.');
+          return;
+        }
+        const res = await PaymentService.createVNPayPayment(
+          {
+            courseId,
+            courseSlug: items[0].slug,
+            orderInfo: `Thanh toán khóa học: ${items[0].courseName}`,
+          },
+          token
+        );
+        if (res.success && res.paymentUrl) {
+          localStorage.setItem('checkout_items', JSON.stringify(items));
+          window.location.href = res.paymentUrl;
+          return;
+        } else {
+          throw new Error('Không nhận được paymentUrl từ server');
+        }
       } else {
+        const orderId = Date.now().toString();
+        const orderData: OrderData = {
+          items,
+          userInfo,
+          paymentMethod,
+          totals: { subtotal, discount, total },
+        };
+        localStorage.setItem(`order_${orderId}`, JSON.stringify(orderData));
+        clearCart();
+        toast.success('Đặt hàng thành công!');
         router.push(`/${locale}/order-success?id=${orderId}&payment=cod`);
       }
-      
     } catch (error) {
       toast.error('Có lỗi xảy ra khi đặt hàng');
       console.error('Order error:', error);
@@ -296,28 +306,28 @@ export default function OrderPageClient() {
                   </div>
                 </div> */}
 
-                {/* MoMo */}
+                {/* VNPay */}
                 <div 
                   className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                    paymentMethod === 'momo' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    paymentMethod === 'vnpay' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                   }`}
-                  onClick={() => setPaymentMethod('momo')}
+                  onClick={() => setPaymentMethod('vnpay')}
                 >
                   <div className="flex items-center gap-3">
                     <input
                       type="radio"
                       name="payment"
-                      value="momo"
-                      checked={paymentMethod === 'momo'}
-                      onChange={() => setPaymentMethod('momo')}
+                      value="vnpay"
+                      checked={paymentMethod === 'vnpay'}
+                      onChange={() => setPaymentMethod('vnpay')}
                       className="text-blue-600"
                     />
-                    <div className="w-5 h-5 bg-pink-500 rounded flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">M</span>
+                    <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">V</span>
                     </div>
                     <div>
-                      <div className="font-medium">Thanh toán MoMo</div>
-                      <div className="text-sm text-gray-500">Thanh toán trực tuyến qua ví MoMo</div>
+                      <div className="font-medium">Thanh toán VNPay</div>
+                      <div className="text-sm text-gray-500">Thanh toán trực tuyến qua VNPay</div>
                     </div>
                   </div>
                 </div>
@@ -377,9 +387,7 @@ export default function OrderPageClient() {
                 disabled={isSubmitting}
                 className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Đang xử lý...' : 
-                  paymentMethod === 'momo' ? 'Thanh toán MoMo' : 'Đặt hàng'
-                }
+                {isSubmitting ? 'Đang xử lý...' : 'Thanh toán'}
               </button>
 
               <p className="text-xs text-gray-500 text-center mt-3">
