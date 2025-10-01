@@ -12,7 +12,7 @@ interface CourseListCardProps {
 const CourseListCard = ({ courses, loading = false }: CourseListCardProps) => {
   if (loading) {
     return (
-      <div className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 ">
         {Array.from({ length: 8 }).map((_, index) => (
           <div
             key={index}

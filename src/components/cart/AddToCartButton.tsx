@@ -4,6 +4,7 @@ import { useAddToCart } from '@/hooks/useAddToCart';
 import { CartItem } from "@/store/slices/cart";
 import { ShoppingCart, Plus } from 'lucide-react';
 import { useCartStore } from '@/store/slices/cart';
+import { Button } from '../ui/button';
 
 interface AddToCartButtonProps {
   product: Omit<CartItem, 'quantity'>;
@@ -29,41 +30,30 @@ export default function AddToCartButton({
   const handleAddToCart = () => {
     addToCart(product);
   };
-
-  const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg'
-  };
-
-  const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
-    icon: 'bg-blue-600 text-white hover:bg-blue-700 p-2'
-  };
-
   if (variant === 'icon') {
     return (
-      <button
+      <Button
         onClick={handleAddToCart}
         disabled={inCart}
-        className={`${variantClasses[variant]} rounded-lg transition-colors ${inCart ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
+      variant={'outline'}
+        className={`rounded-lg transition-colors ${inCart ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
         title="Thêm vào giỏ hàng"
       >
         <Plus className="h-4 w-4" />
-      </button>
+      </Button>
     );
   }
 
   return (
-    <button
+    <Button
       onClick={handleAddToCart}
       disabled={inCart}
-      className={`${variantClasses[variant]} ${sizeClasses[size]} rounded-lg transition-colors font-medium flex items-center gap-2 ${inCart ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
+      variant={'outline'}
+      className={`rounded-lg transition-colors font-medium flex items-center gap-2 ${inCart ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
     >
       <ShoppingCart className="h-4 w-4" />
       {inCart ? inCartLabel : label}
-    </button>
+    </Button>
   );
 }
 

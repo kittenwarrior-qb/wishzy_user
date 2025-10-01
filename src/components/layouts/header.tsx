@@ -35,16 +35,16 @@ export const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500
+      className={` top-0 left-0 right-0 z-[100] transition-all duration-500 lg:px-3
         ${
           isInteractiveMode
-            ? "opacity-0 pointer-events-none -translate-y-full"
-            : "opacity-100 translate-y-0"
+            ? "fixed opacity-0 pointer-events-none -translate-y-full"
+            : "fixed opacity-100 translate-y-0"
         }
         ${
           isScrolled
-            ? "bg-white shadow-md backdrop-blur-sm"
-            : ""
+            ? "sticky bg-white shadow-lg"
+            : "sticky backdrop-blur-sm"
         }
       `}
     >

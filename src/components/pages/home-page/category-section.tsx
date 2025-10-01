@@ -55,9 +55,9 @@ const CategorySection = () => {
 
   return (
     <div ref={sectionRef} className='mx-auto max-w-[1280px] mb-10'>
-      <h2 className='font-semibold text-[30px] text-center mb-12'>Khám phá khóa học tại Wishzy.</h2>
+      <h2 className='font-semibold text-[30px] mb-12 px-3 lg:px-0'>Khám phá khóa học tại Wishzy.</h2>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  px-3 lg:px-0">
         {grades.map((grade) => (
           <div key={grade._id} className="category-card">
             <CategoryCard grade={grade} />

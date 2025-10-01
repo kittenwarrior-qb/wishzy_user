@@ -1,79 +1,121 @@
 'use client'
 
 import React from "react";
-import { Clock, Users, Flag, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import AddToCartForCourseDetail from "@/components/cart/AddToCartForCourseDetail";
+import { Clock, Users, Flag, Star, Eye, Calendar, Heart, Share2 } from "lucide-react";
+import type { CourseDetail } from "@/types/schema/course.schema";
+import Image from "next/image";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { formatDuration } from "@/lib/utils";
+import { mapLevel } from "@/lib/utils";
 
-interface CourseDetail {
-  id: string;
-  name: string;
-  rating: number;
-  totalReviews: number;
-  duration: string;
-  level: string;
-  studyFormat: string;
-  price: number;
-  image: string;
-}
 
 const CourseHeader = ({ course }: { course: CourseDetail }) => {
+  const courseStats = [
+    {
+      icon: Eye,
+      text: `${course.numberOfStudents} lượt xem`,
+    },
+    {
+      icon: Calendar,
+      text: new Date(course.createdAt).toLocaleDateString('vi-VN'),
+    },
+  ];
+
+  const actionIcons = [Heart, Share2];
+
   return (
-     <div className="w-full max-w-[1280px] mx-auto p-4 md:p-8"> 
-      <div className="flex flex-col md:flex-row md:items-start md:gap-12">
-  
-        <div className="w-full md:w-1/2 mb-6 md:mb-0">
-          <img 
-            src={course.image} 
-            alt={course.name}
-            className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+    <div className="w-full max-w-[1280px] mx-auto">
+      <div className="flex flex-col-reverse md:items-start md:gap-12">
+        
+        <div className="w-full mb-6 md:mb-0">
+          <Image 
+            src={course.thumbnail || ""} 
+            alt={course.courseName} 
+            height={400} 
+            width={600} 
+            className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg" 
           />
         </div>
 
-        <div className="w-full md:w-1/2 flex flex-col">
-          <h1 className="text-3xl font-bold text-gray-900">{course.name}</h1>
-          
-          <div className="flex items-center mt-2">
-            <div className="flex text-yellow-400">
-              {[...Array(5)].map((_, i) => {
-                return (
-                  <Star
-                    key={i}
-                    size={18}
-                    fill={i < Math.floor(course.rating) ? "currentColor" : "none"}
-                    className={i < Math.floor(course.rating) ? "" : "text-yellow-400"}
+        <div className="w-full flex flex-col">
+          <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
+            <Breadcrumb className="mb-2">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/course">Khóa học</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  {course.subject?.subjectName || 'Development'}
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  {mapLevel(course.level)}
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+
+            <div className="relative w-fit [font-family:'Be_Vietnam_Pro-Bold',Helvetica] font-bold text-black text-[32px] tracking-[0] leading-[42px]">
+              {course.courseName}
+            </div>
+
+            <div className="inline-flex items-center gap-2.5 relative flex-[0_0_auto]">
+              <div className="relative w-fit mt-[-1.00px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-black text-base tracking-[0] leading-6 whitespace-nowrap">
+                {course.createdBy?.fullName || 'Giảng viên'}
+              </div>
+
+              <div className="flex items-center justify-center gap-2.5 relative">
+                <Star className="relative flex-[0_0_auto] w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <div className="mt-[-1.00px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#777777] text-xs leading-[18px] relative w-fit tracking-[0] whitespace-nowrap">
+                  ({course.averageRating || course.rating})
+                </div>
+              </div>
+            </div>
+
+            <div className="flex w-full items-start justify-between relative flex-[0_0_auto] mt-4">
+              <div className="inline-flex items-center gap-[25px] relative flex-[0_0_auto]">
+                {courseStats.map((stat, index) => {
+                  const IconComponent = stat.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 relative"
+                    >
+                      <IconComponent className="!relative !w-6 !h-6" />
+                      <div className="relative w-fit [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
+                        {stat.text}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="flex items-center gap-2">
+                  <Clock className="!relative !w-6 !h-6" />
+                  <div className="relative w-fit [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
+                    {formatDuration(course.totalDuration)} phút
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 relative">
+                {actionIcons.map((IconComponent, index) => (
+                  <IconComponent
+                    key={index}
+                    className="!relative !w-6 !h-6 cursor-pointer hover:text-gray-600 transition-colors"
                   />
-                );
-              })}
-            </div>
-            <span className="ml-2 text-gray-600">
-              {course.rating} ({course.totalReviews} đánh giá)
-            </span>
-          </div>
-
-          <div className="flex flex-wrap gap-4 mt-4 text-gray-600">
-            <div className="flex items-center">
-              <Clock size={16} className="mr-2" />
-              <span>{course.duration}</span>
-            </div>
-            <div className="flex items-center">
-              <Users size={16} className="mr-2" />
-              <span>{course.studyFormat}</span>
-            </div>
-            <div className="flex items-center">
-              <Flag size={16} className="mr-2" />
-              <span>Trình độ: {course.level}</span>
+                ))}
+              </div>
             </div>
           </div>
-          
-          <div className="text-primary text-2xl font-bold mt-4 md:mt-auto">
-            {course.price.toLocaleString('vi-VN')}₫
-          </div>
-
-          <div className="mt-6">
-            {/* <Button className="w-50 bg-primary text-white py-3 px-4 rounded-md font-semibold hover:bg-blue-700 transition duration-300">Đăng ký khóa học</Button> */}
-            <AddToCartForCourseDetail course={course} label="Đăng ký khoá học" inCartLabel="Đã đăng ký" />
-          </div>  
         </div>
       </div>
     </div>

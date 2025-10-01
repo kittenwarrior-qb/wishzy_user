@@ -53,26 +53,33 @@ const ThreeDCanvas = ({
     
     if (controlsRef.current) {
       controlsRef.current.dispose();
+      controlsRef.current = null;
     }
     
     if (rendererRef.current) {
       rendererRef.current.dispose();
+      rendererRef.current = null;
     }
     
-    if (mountRef.current && rendererRef.current?.domElement) {
-      const canvas = rendererRef.current.domElement;
-      if (mountRef.current.contains(canvas)) {
-        mountRef.current.removeChild(canvas);
+    // Improved canvas cleanup
+    if (mountRef.current) {
+      const existingCanvas = mountRef.current.querySelector("canvas");
+      if (existingCanvas) {
+        mountRef.current.removeChild(existingCanvas);
       }
     }
     
+    // Reset all refs and states
     modelRef.current = null;
     cameraRef.current = null;
-    controlsRef.current = null;
-    rendererRef.current = null;
     sceneRef.current = null;
+    planeRef.current = null;
+    starsRef.current = null;
+    
+    // Reset component states
+    setIsModelLoaded(false);
+    setHasLaunched(false);
   }, []);
-
   // Mouse movement handler
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -90,8 +97,8 @@ const ThreeDCanvas = ({
   }, [isInteractiveMode]);
 
   useEffect(() => {
-    if (!mountRef.current || mountRef.current.querySelector("canvas")) return;
-
+    if (!mountRef.current) return;
+    cleanup();
     const width = mountRef.current.clientWidth || 800;
     const height = mountRef.current.clientHeight || 600;
 

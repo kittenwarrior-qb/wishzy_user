@@ -33,6 +33,7 @@ const IMAGES = [
 
 const BannerSection: React.FC = () => {
   const [isInView, setIsInView] = useState(false);
+  const [canvasKey, setCanvasKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -154,10 +155,12 @@ const BannerSection: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full overflow-hidden bg-[#fff1e8] h-[100vh] pt-16"
+      className="relative w-full overflow-hidden bg-[#fff1e8] h-[100vh]"
+      style={{ transform: 'translateY(-64px)' }}
     >
       <div className={`absolute inset-0 z-0`}>
-        <ThreeDCanvas
+      <ThreeDCanvas
+          key={canvasKey}
           isInteractiveMode={isInteractiveMode}
           isRocketLaunched={isRocketLaunched}
         />
@@ -165,7 +168,7 @@ const BannerSection: React.FC = () => {
 
       <div
         ref={contentRef}
-        className={`absolute inset-0 z-10 h-full flex items-center justify-center overflow-y-auto backdrop-blur-sm px-4 py-6 transition-opacity duration-500
+        className={`absolute inset-0 z-10 h-full flex items-center justify-center overflow-y-auto backdrop-blur-sm px-3 py-6 transition-opacity duration-500
         ${isInteractiveMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
       >
         <div className="max-w-[1280px] w-full">
