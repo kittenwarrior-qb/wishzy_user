@@ -8,11 +8,14 @@ import { Menu, X, Search, ShoppingCart } from "lucide-react";
 import ThemeToggle from "../shared/theme-toggle";
 import { CoursesDropdown } from "../shared/courses-dropdown";
 import { useInteractiveModeStore } from "@/store/slices/interactive-mode";
+import { useCartStore } from "@/store/slices/cart";
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isInteractiveMode } = useInteractiveModeStore();
+  const { getItemCount } = useCartStore();
+  const cartItemCount = getItemCount();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,11 +44,7 @@ export const Header = () => {
             ? "fixed opacity-0 pointer-events-none -translate-y-full"
             : "fixed opacity-100 translate-y-0"
         }
-        ${
-          isScrolled
-            ? "sticky bg-white shadow-lg"
-            : "sticky backdrop-blur-sm"
-        }
+        ${isScrolled ? "sticky bg-white shadow-lg" : "sticky backdrop-blur-sm"}
       `}
     >
       <div className="max-w-[1280px] mx-auto">
@@ -71,7 +70,7 @@ export const Header = () => {
               ))}
             </nav>
           </div>
-          <div className="hidden md:flex items-center gap-2">
+          <div className="flex items-center gap-2  border-t border-gray-200">
             <AnimatedLink
               href="/search"
               className="p-2 text-base-content hover:text-primary transition-colors duration-200"
@@ -80,12 +79,16 @@ export const Header = () => {
             </AnimatedLink>
             <AnimatedLink
               href="/cart"
-              className="p-2 text-base-content hover:text-primary transition-colors duration-200"
+              className="p-2 text-base-content transition-colors duration-200 relative"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={20} className=" hover:text-primary" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  {cartItemCount > 99 ? "99+" : cartItemCount}
+                </span>
+              )}
             </AnimatedLink>
-            {/* <ThemeToggle /> */}
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="ml-2">
               <AnimatedLink href="/login" className="flex items-center gap-2">
                 Đăng nhập
               </AnimatedLink>

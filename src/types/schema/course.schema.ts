@@ -41,7 +41,7 @@ const baseCourseSchema = z.object({
   updatedAt: z.string().optional(),
   slug: z.string(),
   __v: z.number().optional(),
-  averageRating: z.number().optional()
+  averageRating: z.number().optional(),
 });
 
 export const courseListSchema = baseCourseSchema.extend({

@@ -56,19 +56,7 @@ const CourseCard = ({ course }: { course: CourseList }) => {
               {mapLevel(level)}
             </div>
           </div>
-          <div className="hidden sm:flex absolute bottom-[10px] left-[10px] items-center gap-2 px-3 py-[5px] bg-white rounded">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-4 w-4 ${
-                  i < rating ? "text-yellow-500" : "text-muted-foreground"
-                }`}
-              />
-            ))}
-            <span className="text-muted-foreground text-xs">
-              ({ratingCount})
-            </span>
-          </div>
+          
         </div>
       </Link>
 
