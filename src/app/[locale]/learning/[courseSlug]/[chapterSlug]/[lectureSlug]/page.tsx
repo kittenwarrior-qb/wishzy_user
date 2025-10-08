@@ -24,14 +24,12 @@ const LearningPage = async ({ params }: LearningPageProps) => {
       notFound();
     }
 
-    // Find the specific chapter by slug
     const currentChapter = chapterData.chapters.find(ch => ch.slug === chapterSlug);
     if (!currentChapter) {
       console.log('Chapter not found:', chapterSlug);
       notFound();
     }
 
-    // Find the specific lecture by slug
     const currentLecture = currentChapter.lectures?.find(
       lecture => lecture.slug === lectureSlug
     );
