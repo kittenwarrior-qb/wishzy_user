@@ -27,7 +27,6 @@ const CoursePage = async ({ params }: CoursePageProps) => {
       notFound();
     }
 
-    // Redirect to the first chapter and lecture
     redirect(`/learning/${courseSlug}/${firstChapter.slug}/${firstLecture.slug}`);
   } catch (error) {
     console.error('Error fetching course data:', error);

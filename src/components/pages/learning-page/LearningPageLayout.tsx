@@ -35,16 +35,13 @@ const LearningPageLayout = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen max-w-[1280px] mx-auto bg-gray-50">
       <div className="flex h-screen">
-        {/* Main Content Area */}
         <div className="flex-1 flex flex-col">
-          {/* Video Player */}
           <div className="bg-black">
             <VideoPlayer 
               lecture={selectedLecture}
               onNext={() => {
-                // Logic to go to next lecture
                 const allLectures = chapters.flatMap(ch => ch.lectures || []);
                 const currentIndex = allLectures.findIndex(l => l._id === selectedLecture?._id);
                 if (currentIndex < allLectures.length - 1) {
@@ -58,7 +55,6 @@ const LearningPageLayout = ({
                 }
               }}
               onPrevious={() => {
-                // Logic to go to previous lecture
                 const allLectures = chapters.flatMap(ch => ch.lectures || []);
                 const currentIndex = allLectures.findIndex(l => l._id === selectedLecture?._id);
                 if (currentIndex > 0) {
@@ -74,7 +70,6 @@ const LearningPageLayout = ({
             />
           </div>
 
-          {/* Lecture Info */}
           <div className="bg-white p-6 border-b">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {selectedLecture?.lectureName || 'Chọn bài giảng'}
@@ -89,7 +84,6 @@ const LearningPageLayout = ({
             </div>
           </div>
 
-          {/* Additional Content Area */}
           <div className="flex-1 p-6 bg-white">
             <div className="max-w-4xl">
               <h2 className="text-lg font-semibold mb-4">Mô tả bài giảng</h2>
