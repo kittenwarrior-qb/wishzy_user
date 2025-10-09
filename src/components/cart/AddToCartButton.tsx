@@ -57,22 +57,3 @@ export default function AddToCartButton({
     </Button>
   );
 }
-
-// Example usage:
-/*
-const exampleProduct = {
-  id: 1,
-  title: "Complete React Development Course",
-  instructor: "John Doe",
-  price: 299000,
-  originalPrice: 599000,
-  image: "https://example.com/image.jpg",
-  duration: "40 hours",
-  lessons: 120,
-};
-
-// In your component:
-<AddToCartButton product={exampleProduct} />
-<AddToCartButton product={exampleProduct} variant="secondary" size="sm" />
-<AddToCartButton product={exampleProduct} variant="icon" />
-*/

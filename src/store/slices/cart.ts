@@ -4,7 +4,6 @@ import { persist } from 'zustand/middleware';
 export interface CartItem {
   _id: string;
   courseName: string;
-  instructor: string;
   price: number;
   originalPrice?: number;
   thumbnail: string;
@@ -46,6 +45,7 @@ interface CartActions {
   calculateTotals: () => void;
   replaceCart: (items: CartItem[]) => void;
   hasItem: (_id: string) => boolean;
+  hasOwned: (_id: string) => boolean;
 }
 
 type CartStore = CartState & CartActions;
@@ -153,6 +153,11 @@ export const useCartStore = create<CartStore>()(
       hasItem: (_id) => {
         const { items } = get();
         return items.some(item => item._id === _id);
+      },
+
+      hasOwned: (_id) => {
+        // TODO: Implement actual ownership check
+        return false;
       },
 
       calculateTotals: () => {

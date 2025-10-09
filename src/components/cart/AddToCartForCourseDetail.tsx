@@ -15,7 +15,6 @@ export default function AddToCartForCourseDetail({ course, label = 'Đăng ký k
   const product: Omit<CartItem, 'quantity'> = {
     _id: course._id,
     courseName: course.courseName,
-    instructor: 'Giảng viên',
     price: course.price,
     originalPrice: Math.round(course.price * 1.2),
     thumbnail: course.thumbnail || "",
