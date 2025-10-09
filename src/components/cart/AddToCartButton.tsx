@@ -24,8 +24,9 @@ export default function AddToCartButton({
   inCartLabel = 'Đã trong giỏ'
 }: AddToCartButtonProps) {
   const { addToCart } = useAddToCart();
-  const { hasItem } = useCartStore();
+  const { hasItem, hasOwned } = useCartStore();
   const inCart = hasItem(product._id);
+  const isOwned = hasOwned(product._id);
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -34,10 +35,10 @@ export default function AddToCartButton({
     return (
       <Button
         onClick={handleAddToCart}
-        disabled={inCart}
+        disabled={inCart || isOwned}
       variant={'outline'}
-        className={`rounded-lg transition-colors ${inCart ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
-        title="Thêm vào giỏ hàng"
+        className={`rounded-lg transition-colors ${(inCart || isOwned) ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
+        title={isOwned ? 'Bạn đã sở hữu khoá học' : 'Thêm vào giỏ hàng'}
       >
         <Plus className="h-4 w-4" />
       </Button>
@@ -47,12 +48,12 @@ export default function AddToCartButton({
   return (
     <Button
       onClick={handleAddToCart}
-      disabled={inCart}
+      disabled={inCart || isOwned}
       variant={'outline'}
-      className={`rounded-lg transition-colors font-medium flex items-center gap-2 ${inCart ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
+      className={`rounded-lg transition-colors font-medium flex items-center gap-2 ${(inCart || isOwned) ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
     >
       <ShoppingCart className="h-4 w-4" />
-      {inCart ? inCartLabel : label}
+      {isOwned ? 'Đã sở hữu' : (inCart ? inCartLabel : label)}
     </Button>
   );
 }

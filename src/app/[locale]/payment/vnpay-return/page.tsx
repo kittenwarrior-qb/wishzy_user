@@ -1,14 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { PaymentService, VNPayVerifyResult } from '@/services/payment.service';
+import { useCartStore } from '@/store/slices/cart';
 
 export default function VNPayReturnPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const locale = useMemo(() => (pathname?.split('/')?.[1] || 'vi'), [pathname]);
+  const clearCart = useCartStore((s) => s.clearCart);
+  const clearedRef = useRef(false);
 
   const [result, setResult] = useState<VNPayVerifyResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +22,25 @@ export default function VNPayReturnPage() {
       try {
         const params = new URLSearchParams(searchParams?.toString());
         const verify = await PaymentService.verifyReturn(params);
+        // Clear cart once if payment is successful
+        if (
+          !clearedRef.current &&
+          verify?.isSuccess &&
+          verify?.vnp_ResponseCode === '00'
+        ) {
+          // Clear cart and persist owned courses locally for UX guard
+          try {
+            const raw = localStorage.getItem('checkout_items');
+            const items: Array<{ _id: string }> = raw ? JSON.parse(raw) : [];
+            const newIds = Array.isArray(items) ? items.map(i => i._id).filter(Boolean) : [];
+            const ownedRaw = localStorage.getItem('owned_courses');
+            const ownedSet = new Set<string>(ownedRaw ? JSON.parse(ownedRaw) : []);
+            newIds.forEach(id => ownedSet.add(id));
+            localStorage.setItem('owned_courses', JSON.stringify(Array.from(ownedSet)));
+          } catch {}
+          clearCart();
+          clearedRef.current = true;
+        }
         setResult(verify);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Có lỗi xảy ra');

@@ -116,26 +116,16 @@ export default function OrderPageClient() {
     setIsSubmitting(true);
 
     try {
-      if (items.length !== 1) {
-        toast.error('Vui lòng thanh toán 1 khóa học mỗi lần.');
-        return;
-      }
-
-      const courseId = items[0]._id;
-
       if (paymentMethod === 'vnpay') {
         if (!token) {
           toast.error('Bạn cần đăng nhập để thanh toán.');
           return;
         }
-        const res = await PaymentService.createVNPayPayment(
-          {
-            courseId,
-            courseSlug: items[0].slug,
-            orderInfo: `Thanh toán khóa học: ${items[0].courseName}`,
-          },
-          token
-        );
+        const courseIds = items.map(i => i._id);
+        const first = items[0]?.courseName || 'Khóa học';
+        const extra = items.length - 1;
+        const orderInfo = extra > 0 ? `${first} +${extra} khóa khác` : `Thanh toán khóa học: ${first}`;
+        const res = await PaymentService.createVNPayPayment({ courseIds, orderInfo }, token);
         if (res.success && res.paymentUrl) {
           localStorage.setItem('checkout_items', JSON.stringify(items));
           window.location.href = res.paymentUrl;

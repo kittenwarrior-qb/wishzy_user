@@ -25,7 +25,7 @@ export interface VNPayVerifyResult {
 
 export const PaymentService = {
   createVNPayPayment: async (
-    params: { courseId?: string; courseSlug?: string; orderInfo?: string },
+    params: { courseId?: string; courseIds?: string[]; courseSlug?: string; orderInfo?: string },
     token: string,
   ) => {
     const url = buildUrl('/payment/create');
