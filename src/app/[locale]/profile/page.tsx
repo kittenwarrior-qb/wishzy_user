@@ -92,7 +92,7 @@ export default function ProfileDashboard() {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("auth-storage");
         if (!token) {
           toast.error("Bạn chưa đăng nhập, vui lòng đăng nhập lại");
           router.push("/login");
