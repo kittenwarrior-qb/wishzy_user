@@ -1,0 +1,46 @@
+'use client';
+
+import AddToCartButton from '@/components/cart/AddToCartButton';
+import type { CartItem } from '@/store/slices/cart';
+import type { CourseDetail } from "@/types/schema/course.schema";
+
+interface Props {
+  course: CourseDetail
+  label?: string;
+  inCartLabel?: string;
+  className?: string;
+}
+
+export default function AddToCartForCourseDetail({ course, label = 'Đăng ký khoá học', inCartLabel = 'Đã đăng ký', className = '' }: Props) {
+  const product: Omit<CartItem, 'quantity'> = {
+    _id: course._id,
+    courseName: course.courseName,
+    price: course.price,
+    originalPrice: Math.round(course.price * 1.2),
+    thumbnail: course.thumbnail || "",
+    slug: course.slug,
+    level: course.level,
+    numberOfStudents: 0,
+    createdBy: {
+      _id: 'instructor-1',
+      fullName: 'Giảng viên',
+      email: 'instructor@example.com',
+      avatar: undefined,
+    },
+    subject: {
+      _id: 'subject-1',
+      subjectName: 'Chung',
+      slug: 'chung',
+    },
+    grade: {
+      _id: 'grade-1',
+      gradeName: 'Tất cả',
+    },
+    totalDuration: course.totalDuration,
+
+  };
+
+  return (
+    <AddToCartButton product={product} variant="primary" size="lg" label={label} inCartLabel={inCartLabel} className={className} />
+  );
+}

@@ -22,5 +22,13 @@
   "AboutPage": {
     "title": "Wishzy - Find courses, practice exams online!",
     "description": "Khám phá hàng triệu khóa học trực tuyến và luyện đề thi miễn phí. Nâng cao kỹ năng của bạn với Wishzy ngay hôm nay!"
+  },
+  "Cart": {
+    "title": "Shopping Cart - Wishzy",
+    "description": "View and manage courses in your shopping cart"
+  },
+  "Order": {
+    "title": "Order - Wishzy",
+    "description": "Complete your order and payment"
   }
 } 

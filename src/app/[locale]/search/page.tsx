@@ -1,5 +1,11 @@
-import FilterSection from "@/components/pages/search-page/filter-section";
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import FilterSection, { FilterParams } from "@/components/pages/search-page/filter-section";
 import CourseCard from "@/components/shared/course-card";
+import { CourseService, GetCourseListParams } from "@/services/course.service";
+import { CourseList } from "@/types/schema/course.schema";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -7,143 +13,193 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { CourseList } from "@/types/schema/course.schema";
-
-const courses: CourseList[] = [
-  {
-    _id: "c1",
-    courseName: "Lập trình JavaScript cơ bản",
-    price: 499000,
-    status: true,
-    rating: 4.5,
-    description:
-      "Khóa học giúp bạn nắm vững các khái niệm cơ bản về JavaScript.",
-    thumbnail: "",
-    numberOfStudents: 250,
-    level: "Beginner",
-    totalDuration: 3600,
-    subject: {
-      subjectName: "Lập trình Web",
-      slug: "lap-trinh-web",
-    },
-    grade: {
-      gradeName: "Cơ bản",
-    },
-    createdBy: {
-      email: "teacher1@example.com",
-      fullName: "Nguyễn Văn A",
-    },
-    createdAt: "2024-08-20T10:30:00.000Z",
-    updatedAt: "2024-08-22T12:00:00.000Z",
-    slug: "lap-trinh-javascript-co-ban",
-  },
-  {
-    _id: "c2",
-    courseName: "Phân tích dữ liệu với Python",
-    price: 799000,
-    status: true,
-    rating: 4.8,
-    description:
-      "Tìm hiểu cách sử dụng Python cho phân tích và trực quan hóa dữ liệu.",
-    thumbnail: "",
-    numberOfStudents: 180,
-    level: "Intermediate",
-    totalDuration: 5400,
-    subject: {
-      subjectName: "Khoa học dữ liệu",
-      slug: "khoa-hoc-du-lieu",
-    },
-    grade: {
-      gradeName: "Trung cấp",
-    },
-    createdBy: {
-      email: "teacher2@example.com",
-      fullName: "Trần Thị B",
-    },
-    createdAt: "2024-08-21T14:00:00.000Z",
-    updatedAt: "2024-08-23T09:15:00.000Z",
-    slug: "phan-tich-du-lieu-voi-python",
-  },
-  {
-    _id: "c3",
-    courseName: "Thiết kế giao diện với Figma",
-    price: 399000,
-    status: false,
-    rating: 4.2,
-    description: "Khóa học hướng dẫn sử dụng Figma để thiết kế UI/UX.",
-    thumbnail: "",
-    numberOfStudents: 90,
-    level: "Beginner",
-    totalDuration: 2700,
-    subject: {
-      subjectName: "Thiết kế",
-      slug: "thiet-ke",
-    },
-    grade: {
-      gradeName: "Cơ bản",
-    },
-    createdBy: {
-      email: "designer@example.com",
-      fullName: "Lê Văn C",
-    },
-    createdAt: "2024-08-22T08:45:00.000Z",
-    updatedAt: "2024-08-23T10:00:00.000Z",
-    slug: "thiet-ke-giao-dien-voi-figma",
-  },
-  {
-    _id: "c4",
-    courseName: "Thiết kế giao diện với Figma",
-    price: 399000,
-    status: false,
-    rating: 4.2,
-    description: "Khóa học hướng dẫn sử dụng Figma để thiết kế UI/UX.",
-    thumbnail: "",
-    numberOfStudents: 90,
-    level: "Beginner",
-    totalDuration: 2700,
-    subject: {
-      subjectName: "Thiết kế",
-      slug: "thiet-ke",
-    },
-    grade: {
-      gradeName: "Cơ bản",
-    },
-    createdBy: {
-      email: "designer@example.com",
-      fullName: "Lê Văn C",
-    },
-    createdAt: "2024-08-22T08:45:00.000Z",
-    updatedAt: "2024-08-23T10:00:00.000Z",
-    slug: "thiet-ke-giao-dien-voi-figma",
-  },
-];
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 const SearchPage = () => {
+  const searchParams = useSearchParams();
+  const [courses, setCourses] = useState<CourseList[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [filters, setFilters] = useState<FilterParams>({});
+
+  // Get initial search term from URL
+  const initialSearchTerm = searchParams.get('q') || '';
+
+  const fetchCourses = useCallback(async (params: GetCourseListParams) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await CourseService.getCourseList(params);
+      
+      if (response.courses) {
+        setCourses(response.courses || []);
+        // Backend trả về pagination object
+        if (response.pagination) {
+          setTotalPages(response.pagination.totalPages);
+          setCurrentPage(response.pagination.currentPage);
+          setTotalItems(response.pagination.totalItems);
+        }
+      } else {
+        setError("Không thể tải danh sách khóa học");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Đã xảy ra lỗi");
+      setCourses([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Handle filter changes
+  const handleFilterChange = useCallback((newFilters: FilterParams) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
+    
+    const params: GetCourseListParams = {
+      ...newFilters,
+      page: 1,
+      limit: 12,
+    };
+    
+    fetchCourses(params);
+  }, [fetchCourses]);
+
+  // Handle pagination
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    
+    const params: GetCourseListParams = {
+      ...filters,
+      page,
+      limit: 12,
+    };
+    
+    fetchCourses(params);
+  }, [filters, fetchCourses]);
+
+  // Initial load
+  useEffect(() => {
+    const initialFilters: FilterParams = {
+      courseName: initialSearchTerm,
+    };
+    
+    setFilters(initialFilters);
+    
+    const params: GetCourseListParams = {
+      ...initialFilters,
+      page: 1,
+      limit: 12,
+    };
+    
+    fetchCourses(params);
+  }, [initialSearchTerm, fetchCourses]);
+
   return (
     <div className="min-h-[650px] py-8 px-4 xl:px-0">
       <div className="max-w-[1280px] mx-auto">
-        <Breadcrumb>
+        <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>Tìm kiếm sản phẩm</BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>Keyword</BreadcrumbItem>
+            <BreadcrumbItem>Tìm kiếm khóa học</BreadcrumbItem>
+            {initialSearchTerm && (
+              <>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>{initialSearchTerm}</BreadcrumbItem>
+              </>
+            )}
           </BreadcrumbList>
         </Breadcrumb>
-        <div>
-          <div>
-            <FilterSection />
-          </div>
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
-            {courses.map((course) => (
-              <div key={course._id} className="mx-auto">
-                <CourseCard course={course} />
+
+        <FilterSection 
+          onFilterChange={handleFilterChange}
+          initialFilters={{ courseName: initialSearchTerm }}
+        />
+
+        {/* Results */}
+        <div className="mt-8">
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin" />
+              <span className="ml-2">Đang tải khóa học...</span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 mb-4">{error}</p>
+              <Button onClick={() => fetchCourses({ page: 1, limit: 12 })}>
+                Thử lại
+              </Button>
+            </div>
+          ) : courses.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Không tìm thấy khóa học nào phù hợp</p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-4">
+                <p className="text-sm text-gray-600">
+                  Tìm thấy {totalItems} khóa học (trang {currentPage}/{totalPages})
+                </p>
               </div>
-            ))}
-          </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                {courses.map((course) => (
+                  <CourseCard key={course._id} course={course} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-8 gap-2">
+                  <Button
+                    variant="outline"
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                  >
+                    Trước
+                  </Button>
+                  
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let page;
+                    if (totalPages <= 5) {
+                      page = i + 1;
+                    } else if (currentPage <= 3) {
+                      page = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      page = totalPages - 4 + i;
+                    } else {
+                      page = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </Button>
+                    );
+                  })}
+                  
+                  <Button
+                    variant="outline"
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                  >
+                    Sau
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

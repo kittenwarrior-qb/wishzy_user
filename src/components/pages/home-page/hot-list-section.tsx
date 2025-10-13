@@ -47,7 +47,7 @@ const HotListSection = () => {
       : "Hiện ít hơn";
 
   return (
-    <div ref={listRef} className="py-10 max-w-[1280px] mx-auto">
+    <div ref={listRef} className="py-10 max-w-[1280px] mx-auto px-3 lg:px-0">
       <div className="mb-6">
         <p className="font-semibold text-[22px] mb-2">{t("HotListSection.name")}</p>
         <p className="font-semibold text-[30px] mb-2">{t("HotListSection.title")}</p>

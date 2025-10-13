@@ -5,9 +5,9 @@ export const gradeSchema = z.object({
   _id: z.string(),
   gradeName: z.string(),
   status: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  slug: z.string(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+  slug: z.string().optional(),
 });
 
 export const gradeListResponseSchema = msgSchema.extend({
@@ -15,5 +15,10 @@ export const gradeListResponseSchema = msgSchema.extend({
   pagination: paginationSchema
 });
 
+export const gradeDetailResponseSchema = msgSchema.extend({
+  grade: gradeSchema
+});
+
 export type Grade = z.infer<typeof gradeSchema>;
 export type GradeListResponse = z.infer<typeof gradeListResponseSchema>;
+export type GradeDetailResponse = z.infer<typeof gradeDetailResponseSchema>;

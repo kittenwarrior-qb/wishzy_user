@@ -9,10 +9,10 @@ export const AnimatedLink = ({ href, className = "", children }: {href: string, 
     <Link
       href={href}
       className={`hover-circle-link text-base-content ${className}`}
-      // onClick={handleClick}
     >
       {children}
     </Link>
   );
 };
 
+ 
