@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { BookOpen, Play, HelpCircle, Download, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -77,68 +78,42 @@ const mapApiUserToUserInfo = (apiUser: ApiUser): UserInfoType => {
   };
 };
 
-export interface CourseType {
-  name: string;
-  progress: number;
-  status?: "In Progress" | "Completed";
-  image: string;
-}
-
-export interface ScheduleItemType {
-  title: string;
-  course: string;
-  time: string;
-  location?: string;
-}
-
-export interface CertificateType {
-  title: string;
-  provider: string;
-  date: string;
-  pdf?: string;
-}
-
 export default function ProfileDashboard() {
   const [user, setUser] = useState<UserInfoType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   const handleChange = (field: keyof UserInfoType, value: string) => {
     if (!user) return;
     setUser({ ...user, [field]: value });
   };
 
-  const courses: CourseType[] = [
-    { name: "React Basics", progress: 75, status: "In Progress", image: "aiw" },
-    { name: "Advanced JavaScript", progress: 50, status: "In Progress", image: "aiw" },
-    { name: "TypeScript Essentials", progress: 90, status: "In Progress", image: "aiw" },
-  ];
-
-  const schedules: ScheduleItemType[] = [
-    { title: "Q&A tuần", course: "React Basics", time: "Hôm nay • 19:30 - 20:30", location: "Zoom #123-456" },
-    { title: "Chấm bài", course: "Advanced JavaScript", time: "Thứ 4 • 14:00 - 15:00" },
-    { title: "Livestream tổng kết", course: "TypeScript Essentials", time: "Thứ 6 • 20:00 - 21:00" },
-  ];
-
-  const certificates: CertificateType[] = [
-    { title: "React Developer", provider: "Meta", date: "06/2025", pdf: "/react-basics.pdf" },
-    { title: "TypeScript Pro", provider: "Udacity", date: "05/2025", pdf: "/typescript-essentials.pdf" },
-  ];
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("auth-storage");
+        if (!token) {
+          toast.error("Bạn chưa đăng nhập, vui lòng đăng nhập lại");
+          router.push("/login");
+          return;
+        }
+
         const res = await UserService.getProfile();
         if (res.user) setUser(mapApiUserToUserInfo(res.user));
+        else {
+          toast.error("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại");
+          router.push("/login");
+        }
       } catch (error: unknown) {
-        if (error instanceof Error) toast.error("Lỗi khi tải thông tin", { description: error.message });
-        else toast.error("Lỗi không xác định khi tải thông tin");
+        toast.error("Không thể tải thông tin, vui lòng đăng nhập lại");
+        router.push("/login");
       } finally {
         setLoading(false);
       }
     };
     fetchProfile();
-  }, []);
+  }, [router]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -162,8 +137,7 @@ export default function ProfileDashboard() {
       setUser(mapApiUserToUserInfo(updated.user));
       toast.success("Cập nhật thông tin thành công");
     } catch (error: unknown) {
-      if (error instanceof Error) toast.error("Lỗi khi cập nhật", { description: error.message });
-      else toast.error("Lỗi không xác định khi cập nhật");
+      toast.error("Lỗi khi cập nhật, vui lòng thử lại");
     } finally {
       setLoading(false);
     }
@@ -218,9 +192,9 @@ export default function ProfileDashboard() {
 
       <div className="space-y-6 px-4">
         <UserInfo user={user} handleChange={handleChange as (field: string, value: string) => void} onSave={handleSaveProfile} />
-        <Schedule schedules={schedules} />
-        <Certificates certificates={certificates} />
-        <Courses courses={courses} />
+        <Schedule schedules={[]} />
+        <Certificates certificates={[]} />
+        <Courses courses={[]} />
         <TeacherPanel />
       </div>
     </div>
