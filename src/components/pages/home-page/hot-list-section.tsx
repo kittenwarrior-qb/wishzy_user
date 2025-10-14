@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 const HotListSection = () => {
   const [courses, setCourses] = useState<CourseList[]>([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(4); 
+  const [visibleCount, setVisibleCount] = useState(5); 
   const t = useTranslations("HomePage");
 
   const listRef = useRef<HTMLDivElement | null>(null); 
@@ -33,22 +33,22 @@ const HotListSection = () => {
 
   const handleShowMore = () => {
     if (visibleCount >= courses.length) {
-      setVisibleCount(4);
+      setVisibleCount(5);
       listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      setVisibleCount((prev) => Math.min(prev + 8, courses.length));
+      setVisibleCount((prev) => Math.min(prev + 5, courses.length));
     }
   };
 
   const remaining = courses.length - visibleCount;
   const showMoreLabel =
     remaining > 0
-      ? `Hiển thị thêm ${remaining >= 8 ? 8 : remaining}`
+      ? `Hiển thị thêm ${remaining >= 5 ? 5 : remaining}`
       : "Hiện ít hơn";
 
   return (
-    <div ref={listRef} className="py-10 max-w-[1280px] mx-auto px-3 lg:px-0">
-      <div className="mb-6">
+    <div ref={listRef} className="py-10 max-w-[2400px] mx-auto ">
+      <div className="mb-6  px-[35px] ">
         <p className="font-semibold text-[22px] mb-2">{t("HotListSection.name")}</p>
         <p className="font-semibold text-[30px] mb-2">{t("HotListSection.title")}</p>
         <p className="text-[18px]">{t("HotListSection.description")}</p>
@@ -56,7 +56,7 @@ const HotListSection = () => {
 
       {loading ? (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
-      {Array.from({ length: 4 }).map((_, i) => (
+      {Array.from({ length: 5 }).map((_, i) => (
         <div
           key={i}
           className="flex flex-col md:flex-col max-md:flex-row max-md:items-center max-md:h-[140px] rounded-2xl border overflow-hidden"
@@ -76,8 +76,8 @@ const HotListSection = () => {
   )}
 
 
-      {courses.length > 4 && (
-        <div className="flex gap-3 mt-6">
+      {courses.length > 5 && (
+        <div className="flex gap-3 mt-6   px-[35px]">
           <Button onClick={handleShowMore} variant="default" className="text-[14px]">
             {showMoreLabel}
           </Button>

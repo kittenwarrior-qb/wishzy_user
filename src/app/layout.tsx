@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import Transition from "@/components/shared/transitions";
+import Header from "@/components/layouts/header"; // ← THÊM DÒNG NÀY
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -10,11 +11,11 @@ const beVietnamPro = Be_Vietnam_Pro({
   weight: ["100","200","300","400","500","600","700","800","900"],
 });
 
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" data-theme="wishzy" suppressHydrationWarning>
       <body className={`${beVietnamPro.variable} antialiased`}>
+        <Header /> 
         <Transition>
           {children}
           <Toaster position="top-right" richColors />

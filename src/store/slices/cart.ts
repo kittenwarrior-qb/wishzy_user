@@ -66,20 +66,17 @@ const calculateTotals = (items: CartItem[]) => {
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
-      // Initial state
       items: [],
       subtotal: 0,
       discount: 0,
       total: 0,
 
-      // Actions
       addItem: (item) => {
         const { items } = get();
         const existingItem = items.find(cartItem => cartItem._id === item._id);
         
         let newItems: CartItem[];
         if (existingItem) {
-          // Do not increase beyond 1; keep exactly 1 per user as business rule
           newItems = items.map(cartItem =>
             cartItem._id === item._id
               ? { ...cartItem, quantity: 1 }
@@ -96,7 +93,6 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
-      // Replace entire cart (used to hydrate from checkout_items)
       replaceCart: (newItems) => {
         const totals = calculateTotals(newItems);
         set({
@@ -156,7 +152,6 @@ export const useCartStore = create<CartStore>()(
       },
 
       hasOwned: (_id) => {
-        // TODO: Implement actual ownership check
         return false;
       },
 
