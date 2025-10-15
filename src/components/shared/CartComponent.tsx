@@ -3,41 +3,35 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useCartStore, type CartItem } from "@/store/slices/cart";
-import { useOnClickOutside } from "@/hooks/useOnclickOutside";
 import Image from "next/image";
 
 const CartComponent: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    // State to manage hover visibility
+    const [isOpen, setIsOpen] = useState(false); 
     const { getItemCount, items, removeItem, total } = useCartStore();
-    const cartRef = useRef<HTMLDivElement>(null);
     
     const cartItemCount = getItemCount();
     const totalPrice = total;
-    
     const cartItems: CartItem[] = items;
 
     const handleRemoveItem = (itemId: string) => {
         removeItem(itemId);
     };
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
-
-    // Close dropdown when clicking outside
-    useOnClickOutside(cartRef, () => {
-        setIsOpen(false);
-    });
-
     return (
-        <div className="relative" ref={cartRef}>
+        // Use onMouseEnter/onMouseLeave on the parent div
+        <div 
+            className="relative" 
+            onMouseEnter={() => setIsOpen(true)}
+            onMouseLeave={() => setIsOpen(false)}
+        >
             <Button 
                 variant="ghost" 
                 size="icon" 
                 className="w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors relative"
-                onClick={toggleDropdown}
+                // Removed onClick toggle
             >
                 <ShoppingCart className="w-5 h-5 text-[#cccccc]" />
                 {cartItemCount > 0 && (
@@ -48,7 +42,8 @@ const CartComponent: React.FC = () => {
             </Button>
 
             {isOpen && cartItems.length > 0 && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                // Removed mt-2 for a seamless transition
+                <div className="absolute right-0 top-full w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <div className="p-4">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3">Giỏ hàng của bạn</h3>
                         
@@ -101,7 +96,8 @@ const CartComponent: React.FC = () => {
             )}
 
             {isOpen && cartItems.length === 0 && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                // Removed mt-2 for a seamless transition
+                <div className="absolute right-0 top-full w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <div className="p-4 text-center">
                         <ShoppingCart className="w-12 h-12 text-gray-300 mx-auto mb-2" />
                         <p className="text-gray-500 text-sm mb-3">Giỏ hàng của bạn đang trống</p>

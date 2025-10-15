@@ -3,29 +3,25 @@
 import { Button } from "@/components/ui/button";
 import {
   ChevronDown,
-  Mic,
-  Search,
   Menu,
 } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import { useOnClickOutside } from "@/hooks/useOnclickOutside";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import CartComponent from "@/components/shared/CartComponent"; 
 import AuthComponent from "@/components/shared/AuthComponent"; 
+import SearchComponent from "@/components/shared/SearchComponent";
 import Link from "next/link";
+import { Grade } from "@/types/schema/grade.schema";
+import { GradeService } from "@/services/grade.service";
 
-const navigationItems = [
-    { label: "Tiểu học", id: "tieu-hoc" }, { label: "THPT", id: "thpt" },
-    { label: "THCS", id: "thcs" }, { label: "ĐGNL", id: "dgnl" },
-    { label: "Luyện đề", id: "luyen-de" }, { label: "Thi thử", id: "thi-thu" },
-    { label: "Trắc nghiệm", id: "trac-nghiem" }, { label: "Tài liệu", id: "tai-lieu" },
-    { label: "Lớp 1", id: "lop1" }, { label: "Lớp 2", id: "lop2" },
-    { label: "Lớp 3", id: "lop3" }, { label: "Lớp 4", id: "lop4" },
-    { label: "Lớp 5", id: "lop5" }, { label: "Lớp 6", id: "lop6" },
-    { label: "Lớp 7", id: "lop7" }, { label: "Lớp 8", id: "lop8" },
-];
+interface NavigationItem {
+    label: string;
+    id: string;
+}
+
 const subjects = [
     { name: "Toán" }, { name: "Lý" }, { name: "Hóa" }, { name: "Văn" }, { name: "Anh" },
 ];
@@ -33,61 +29,11 @@ const testItems = [
     { name: "Đề thi Toán" }, { name: "Đề thi Lý" }, { name: "Đề thi Hóa" }, { name: "Đề thi Văn" }, { name: "Đề thi Anh" },
 ];
 
-interface SearchBarProps {
-    isSearchActive: boolean;
-    onSearchFocus: () => void;
-    onSearchBlur: () => void;
-    variant: "sticky" | "normal";
-    activeDropdown?: string | null;
-}
-const SearchBar: React.FC<SearchBarProps> = ({
-    isSearchActive,
-    onSearchFocus,
-    onSearchBlur,
-    variant,
-    activeDropdown,
-}) => {
-    const stickyClasses = "flex-1 h-[48px] px-4";
-    const normalClasses = `w-[70%] h-[48px] px-5 transition-opacity duration-300 ${
-        activeDropdown ? "opacity-0 invisible" : "opacity-100 visible"
-    }`;
-
-    return (
-        <div
-            className={`flex items-center justify-between py-0 bg-[#383838] rounded-[50px] border-2 transition-colors ${
-                isSearchActive
-                ? "border-white"
-                : "border-transparent hover:border-zinc-600"
-            } ${variant === "sticky" ? stickyClasses : normalClasses}`}
-        >
-            <div className="flex items-center gap-[33px] flex-1 min-w-0">
-                <Button variant="ghost" className="h-auto gap-[9px] px-0 hover:bg-transparent hidden sm:inline-flex">
-                    <span className="font-normal text-[#ffffff] text-sm">Tất cả</span>
-                    <ChevronDown className="w-2.5 h-2.5 text-[#ffffff]" />
-                </Button>
-                <div className="w-px h-6 bg-zinc-600 hidden sm:block" />
-                <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <Search className="w-4 h-4 text-[#ffffff] flex-shrink-0" />
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm khóa học, tài liệu,..."
-                        className="w-full h-full bg-transparent text-sm text-white placeholder:text-[#cccccc] focus:outline-none"
-                        onFocus={onSearchFocus}
-                        onBlur={onSearchBlur}
-                    />
-                </div>
-            </div>
-            <Button variant="ghost" size="icon" className="w-6 h-6 p-0 hover:bg-transparent">
-                <Mic className="w-6 h-6 text-[#ffffff]" />
-            </Button>
-        </div>
-    );
-};
-
 interface DropdownContentProps {
-    hiddenItems: typeof navigationItems;
+    hiddenItems: NavigationItem[];
     activeId: string;
 }
+
 const DropdownContent = ({ hiddenItems, activeId }: DropdownContentProps) => {
     if (activeId === "more") {
         return (
@@ -163,10 +109,12 @@ const DropdownContent = ({ hiddenItems, activeId }: DropdownContentProps) => {
 };
 
 const Header = () => {
-    const [visibleItems, setVisibleItems] = useState<typeof navigationItems>([]);
-    const [hiddenItems, setHiddenItems] = useState<typeof navigationItems>([]);
+    // Navigation states
+    const [grades, setGrades] = useState<Grade[]>([]);
+    const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([]);
+    const [visibleItems, setVisibleItems] = useState<NavigationItem[]>([]);
+    const [hiddenItems, setHiddenItems] = useState<NavigationItem[]>([]);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const [isSearchActive, setIsSearchActive] = useState(false);
     const [showStickyHeader, setShowStickyHeader] = useState(false);
 
     const headerRef = useRef<HTMLDivElement>(null);
@@ -174,9 +122,33 @@ const Header = () => {
 
     const isScrolled = useScrollPosition(100);
 
+    // Fetch grades and transform to navigation items
+    const fetchGrades = useCallback(async () => {
+        try {
+            const data = await GradeService.getGrades();
+            setGrades(data.grades || []);
+            
+            // Transform grades to navigation items
+            const navItems: NavigationItem[] = data.grades?.map((grade: Grade) => ({
+                label: grade.gradeName,
+                id: grade.slug || grade._id, // Use slug if available, fallback to _id
+            })) || [];
+            
+            setNavigationItems(navItems);
+        } catch (error) {
+            console.error("fetchGrades error:", error);
+            setGrades([]);
+            setNavigationItems([]);
+        }
+    }, []);
+
+    // Initial load - fetch grades
+    useEffect(() => {
+        fetchGrades();
+    }, [fetchGrades]);
+
     useOnClickOutside(headerRef, () => {
         setActiveDropdown(null);
-        setIsSearchActive(false);
     });
     
     useEffect(() => {
@@ -199,8 +171,8 @@ const Header = () => {
             const availableWidth = rightSectionRect.left - navStartX - 20;
 
             let currentWidth = 0;
-            const visible: typeof navigationItems = [];
-            const hidden: typeof navigationItems = [];
+            const visible: NavigationItem[] = [];
+            const hidden: NavigationItem[] = [];
             const moreButtonWidth = 80;
 
             for (let i = 0; i < navigationItems.length; i++) {
@@ -223,7 +195,7 @@ const Header = () => {
         calculateVisibleItems();
         window.addEventListener("resize", calculateVisibleItems);
         return () => window.removeEventListener("resize", calculateVisibleItems);
-    }, [isScrolled]);
+    }, [isScrolled, navigationItems]);
 
     const handleNavClick = (id: string) => {
         if (isScrolled) return;
@@ -257,10 +229,7 @@ const Header = () => {
                             <div className="flex-1 min-w-0">
                                 <div className="hidden xl:flex items-center h-full">
                                     {isScrolled ? (
-                                        <SearchBar
-                                            isSearchActive={isSearchActive}
-                                            onSearchFocus={() => setIsSearchActive(true)}
-                                            onSearchBlur={() => setIsSearchActive(false)}
+                                        <SearchComponent
                                             variant="sticky"
                                         />
                                     ) : (
@@ -287,10 +256,7 @@ const Header = () => {
                                 
                                 {/* Mobile & Tablet (< 1280px) */}
                                 <div className="xl:hidden flex-1 flex justify-center">
-                                    <SearchBar
-                                        isSearchActive={isSearchActive}
-                                        onSearchFocus={() => setIsSearchActive(true)}
-                                        onSearchBlur={() => setIsSearchActive(false)}
+                                    <SearchComponent
                                         variant="sticky"
                                     />
                                 </div>
@@ -322,10 +288,7 @@ const Header = () => {
 
                         {!isScrolled && (
                             <div className="hidden xl:flex w-full pb-2.5">
-                                <SearchBar
-                                    isSearchActive={isSearchActive}
-                                    onSearchFocus={() => setIsSearchActive(true)}
-                                    onSearchBlur={() => setIsSearchActive(false)}
+                                <SearchComponent
                                     variant="normal"
                                     activeDropdown={activeDropdown}
                                 />

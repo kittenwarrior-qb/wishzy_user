@@ -35,7 +35,8 @@ const AuthComponent: React.FC = () => {
             </Button>
 
             {isHovered && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                // Removed mt-2 to eliminate the gap and match CartComponent
+                <div className="absolute right-0 top-full w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <div className="p-4">
                         <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
                             <div className="w-10 h-10 bg-[#ffa500] rounded-full flex items-center justify-center">

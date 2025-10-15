@@ -4,6 +4,7 @@ import AdSection from "@/components/pages/home-page/ad-section";
 import BannerSection from "@/components/pages/home-page/banner-section";
 import CategorySection from "@/components/pages/home-page/category-section";
 import HotListSection from "@/components/pages/home-page/hot-list-section";
+import InstructorsSection from "@/components/pages/home-page/instructors";
 import AboutSection from "@/components/pages/home-page/about-section";
 import GradeSection from "@/components/pages/home-page/grade-section";
 import ContactSection from "@/components/pages/home-page/contact-section";
@@ -13,11 +14,12 @@ import TutorialSection from "@/components/pages/home-page/tutorial-section";
 
 export default function HomePageClient() {
   return (
-        <>
+        <div className="bg-[#FFF5ED]">
         <AdSection/>
         <BannerSection/>
         <CategorySection/>
           <HotListSection />
+          <InstructorsSection />
           {/* <GradeSection />
           <ResultSection />
           <HotListSection />
@@ -25,6 +27,6 @@ export default function HomePageClient() {
           <TutorialSection />
           <ContactSection />
           <AboutSection /> */}
-        </>
+        </div>
   );
 }

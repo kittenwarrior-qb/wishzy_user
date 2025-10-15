@@ -7,12 +7,17 @@ import { CourseList } from '@/types/schema/course.schema'
 interface CourseListCardProps {
   courses: CourseList[]
   loading?: boolean
+  showFilters?: boolean
 }
 
-const CourseListCard = ({ courses, loading = false }: CourseListCardProps) => {
+const CourseListCard = ({ courses, loading = false, showFilters = false }: CourseListCardProps) => {
   if (loading) {
     return (
-      <div className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5 ">
+      <div className={`max-w-[2400px] px-[35px] mx-auto grid gap-10 ${
+        showFilters 
+          ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' 
+          : 'grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6'
+      }`}>
         {Array.from({ length: 8 }).map((_, index) => (
           <div
             key={index}
@@ -32,7 +37,12 @@ const CourseListCard = ({ courses, loading = false }: CourseListCardProps) => {
   }
 
   return (
-    <div className="max-w-[2400px] px-[35px] mx-auto grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+    <div className={`max-w-[2400px] px-[35px] mx-auto grid gap-10 ${
+      showFilters 
+        ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4' 
+        : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+        // : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'
+    }`}>
       {courses.map((course) => (
         <CourseCard key={course._id} course={course} />
       ))}

@@ -1,72 +1,142 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeftCircle } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
 import React from "react";
+import { User } from "@/types/schema/user.schema";
 
-const teachersData = [
-  { id: 1, name: "Cô A" },
-  { id: 2, name: "Cô A" },
-  { id: 3, name: "Cô A" },
-  { id: 4, name: "Cô A" },
-  { id: 5, name: "Cô A" },
-  { id: 6, name: "Cô A" },
-  { id: 7, name: "Cô A" },
-  { id: 8, name: "Cô A" },
+const instructorsData: User[] = [
+    // ... dữ liệu giảng viên của bạn không thay đổi
+  { 
+    _id: "1", 
+    email: "instructor1@wishzy.com", 
+    fullName: "Cô Nguyễn Thị Lan", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234567"
+  },
+  { 
+    _id: "2", 
+    email: "instructor2@wishzy.com", 
+    fullName: "Thầy Trần Văn Nam", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234568"
+  },
+  { 
+    _id: "3", 
+    email: "instructor3@wishzy.com", 
+    fullName: "Cô Lê Thị Hạnh", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234569"
+  },
+  { 
+    _id: "4", 
+    email: "instructor4@wishzy.com", 
+    fullName: "Thầy Phạm Minh Tuấn", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234570"
+  },
+  { 
+    _id: "5", 
+    email: "instructor5@wishzy.com", 
+    fullName: "Cô Võ Thị Mai", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234571"
+  },
+  { 
+    _id: "6", 
+    email: "instructor6@wishzy.com", 
+    fullName: "Thầy Hoàng Văn Đức", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234572"
+  },
+  { 
+    _id: "7", 
+    email: "instructor7@wishzy.com", 
+    fullName: "Cô Đặng Thị Linh", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234573"
+  },
+  { 
+    _id: "8", 
+    email: "instructor8@wishzy.com", 
+    fullName: "Thầy Bùi Quốc Anh", 
+    avatar: "", 
+    role: "instructor" as const,
+    phone: "0901234574"
+  },
 ];
 
 const Property = () => {
   return (
-    <section className="w-full max-w-[1280px] gap-3.5 px-[35px] py-0 flex flex-col items-start relative">
-      <header className="flex justify-between self-stretch w-full flex-[0_0_auto] items-start relative">
-        <div className="inline-flex flex-col h-[54px] justify-between flex-[0_0_auto] items-start relative">
-          <h2 className="relative w-fit mt-[-1.00px] [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-black text-xl tracking-[0] leading-[30px] whitespace-nowrap">
-            Giảng viên
-          </h2>
-
-          <p className="relative w-[276px] [font-family:'Be_Vietnam_Pro-Medium',Helvetica] font-medium text-black text-base tracking-[0] leading-6">
-            Khám phá giáo viên toàn quốc
-          </p>
-        </div>
-
-        <div className="inline-flex h-[54px] justify-around gap-3.5 flex-[0_0_auto] flex-col items-start relative">
-          <Button
-            className="relative w-fit [font-family:'Be_Vietnam_Pro-Medium',Helvetica] font-medium text-black text-base tracking-[0] leading-6 whitespace-nowrap p-0 h-auto"
-          >
-            Hiện tất cả
-          </Button>
-        </div>
-      </header>
-
-      <div className="relative self-stretch w-full">
-          <div className="flex gap-3.5 w-full items-start pb-2">
-            {teachersData.map((teacher) => (
-              <Card
-                key={teacher.id}
-                className="w-[212px] flex-shrink-0 gap-3 flex flex-col items-start border-0 shadow-none bg-transparent"
-              >
-                <CardContent className="p-0 w-full">
-                  <div className="flex h-[195px] gap-2 self-stretch w-full flex-col items-start relative mb-3">
-                    <div className="relative flex-1 self-stretch w-full grow bg-[#dddddd] rounded" />
-                  </div>
-
-                  <h3 className="relative w-fit [font-family:'Be_Vietnam_Pro-SemiBold',Helvetica] font-semibold text-black text-base tracking-[0] leading-6 whitespace-nowrap">
-                    {teacher.name}
-                  </h3>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-[68px] left-[-30px] w-[59px] h-[59px] rounded-full p-0 hover:bg-transparent"
-          aria-label="Previous"
-        >
-          <ChevronLeftCircle className="w-[59px] h-[59px]" />
-        </Button>
+    <div className="py-10 max-w-[2400px] mx-auto">
+      <div className="mb-6 px-[35px]">
+        <p className="font-semibold text-[22px] mb-2">Giảng viên</p>
+        <p className="text-[18px]">Khám phá giáo viên toàn quốc</p>
       </div>
-    </section>
+
+      <div className="px-[35px] relative">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: false,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-3.5">
+            {instructorsData.map((instructor) => (
+              <CarouselItem key={instructor._id} className="pl-3.5 basis-auto">
+                <Card className="w-[220px] flex-shrink-0 flex flex-col items-start border-0 shadow-none bg-transparent group">
+                  <CardContent className="p-0 w-full">
+                    <div className="h-[220px] w-full relative mb-3  overflow-hidden">
+                      <Image
+                        src={instructor.avatar || "/logo/bg_logo_black.png"}
+                        alt={instructor.fullName}
+                        fill
+                        sizes="220px"
+                        className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                      />
+
+                      <div
+                        className="
+                          absolute inset-0 bg-white/70
+                          origin-center
+                          transition-transform duration-700 ease-in-out
+                          group-hover:scale-[5]
+                        "
+                        style={{
+                          maskImage: 'radial-gradient(circle at center, transparent 100px, black 100px)',
+                          WebkitMaskImage: 'radial-gradient(circle at center, transparent 100px, black 100px)',
+                        }}
+                      />
+                    </div>
+
+                    <h3 className="font-semibold text-black text-base">
+                      {instructor.fullName}
+                    </h3>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          
+          <CarouselPrevious className="absolute top-1/2 -translate-y-1/2 left-[-10px] z-10" />
+          <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-[-10px] z-10" />
+          
+        </Carousel>
+      </div>
+    </div>
   );
 };
 

@@ -86,17 +86,18 @@ const CourseCard = ({ course }: { course: CourseList }) => {
       <Card
         className="w-full overflow-hidden
         transition-transform duration-300 ease-in-out 
-        flex flex-row sm:flex-col group"
+        flex flex-row sm:flex-col group hover:scale-104"
       >
         <Link href={`/course/${slug}`} className="flex-shrink-0">
           <div className="relative w-[120px] h-[120px] sm:w-full sm:h-[185px] bg-muted overflow-hidden">
             <Image
-              src={thumbnail || "https://res.cloudinary.com/djuksxdrw/image/upload/v1754109827/cardpng_nzmt5j.png"}
+              src={thumbnail || "/logo/bg_logo_black.png"}
               alt={courseName}
               fill
               sizes="(max-width: 768px) 120px, 300px"
-              className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+              className="object-cover"
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 ease-in-out" />
           </div>
         </Link>
 

@@ -17,7 +17,8 @@ export type GetCourseListParams = {
   rating?: number;
   level?: string;
   sortBy?: 'newest' | 'price_asc' | 'price_desc' | 'popular';
-  orderDate?: number; 
+  orderDate?: number;
+  subjects?: string[];
 };
 
 export const CourseService = {
@@ -47,11 +48,17 @@ export const CourseService = {
     params?: GetCourseListParams
   ): Promise<CourseListResponse> => {
     try {
-      const query = new URLSearchParams(
-        Object.entries(params ?? {})
-          .filter(([_, v]) => v !== undefined && v !== null && v !== "")
-          .map(([k, v]) => [k, String(v)])
-      );
+      const query = new URLSearchParams();
+      
+      Object.entries(params ?? {})
+        .filter(([_, v]) => v !== undefined && v !== null && v !== "")
+        .forEach(([k, v]) => {
+          if (k === 'subjects' && Array.isArray(v)) {
+            v.forEach(subject => query.append('subjects', subject));
+          } else {
+            query.append(k, String(v));
+          }
+        });
 
       const url = `${apiUrl}/course${
         query.toString() ? `?${query.toString()}` : ""
