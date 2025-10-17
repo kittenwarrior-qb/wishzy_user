@@ -22,9 +22,10 @@ import Link from "next/link";
 import { AuthService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/slices/auth";
 import { loginFormSchema } from "@/types/schema/auth.schema";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useCartStore } from "@/store/slices/cart";
 
-const items: {
+const formItems: {
   label: string;
   name: "email" | "password";
   placeholer: string;
@@ -41,6 +42,9 @@ const LoginPage = () => {
   const [isLoading, setIsLoadind] = useState<boolean>(false);
   const { setAuth } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = (pathname?.split('/')?.[1] || 'vi');
+  const { items: cartItems } = useCartStore();
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -61,7 +65,23 @@ const LoginPage = () => {
           className: "mt-8",
         });
         form.reset();
-        router.push("/");
+        // Decide destination based on cart existence
+        let hasItems = (cartItems?.length || 0) > 0;
+        if (!hasItems) {
+          try {
+            const raw = localStorage.getItem('wishzy-cart-storage');
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              const persistedItems = parsed?.state?.items;
+              if (Array.isArray(persistedItems) && persistedItems.length > 0) {
+                hasItems = true;
+              }
+            }
+          } catch {}
+        }
+
+        const target = hasItems ? `/${locale}/cart` : `/${locale}`;
+        router.replace(target);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -89,7 +109,7 @@ const LoginPage = () => {
             </div>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                {items.map((item) => (
+                {formItems.map((item) => (
                   <FormField
                     key={item.name}
                     control={form.control}
