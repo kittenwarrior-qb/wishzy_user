@@ -3,7 +3,7 @@
 import { useCartStore } from "@/store/slices/cart";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { CreditCard, MapPin, User, Mail, Phone, ArrowLeft } from "lucide-react";
+import { CreditCard, User, Mail, Phone, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { CartItem } from "@/store/slices/cart";
 import { PaymentService } from "@/services/payment.service";
@@ -12,8 +12,7 @@ import { useAuthStore } from "@/store/slices/auth";
 interface UserInfo {
   fullName: string;
   email: string;
-  phone: string;
-  address: string;
+  phone?: string;
 }
 
 interface OrderData {
@@ -44,12 +43,47 @@ export default function OrderPageClient() {
     fullName: '',
     email: '',
     phone: '',
-    address: ''
   });
   
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'vnpay'>('vnpay');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
+
+  // Enforce authentication: redirect to login if not logged in (hydration-safe)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Peek persisted auth to avoid redirecting before Zustand rehydrates
+    let persistedToken: string | null = null;
+    let persistedUser: unknown = null;
+    try {
+      const raw = localStorage.getItem('auth-storage');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        persistedToken = parsed?.state?.token ?? null;
+        persistedUser = parsed?.state?.user ?? null;
+      }
+    } catch {}
+
+    const hasAuth = Boolean(token || persistedToken);
+    const hasUser = Boolean(user || persistedUser);
+
+    if (!hasAuth || !hasUser) {
+      const current = window.location.pathname || `/${locale}/order`;
+      router.replace(`/${locale}/login?redirect=${encodeURIComponent(current)}`);
+    }
+  }, [token, user, router, locale]);
+
+  // Prefill user info from profile to improve UX
+  useEffect(() => {
+    if (user) {
+      setUserInfo((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.fullName || '',
+        email: prev.email || user.email || '',
+      }));
+    }
+  }, [user]);
 
   // Hydrate giỏ hàng từ checkout_items nếu Zustand rỗng, sau đó mới quyết định redirect
   useEffect(() => {
@@ -86,24 +120,18 @@ export default function OrderPageClient() {
       toast.error('Vui lòng nhập email');
       return false;
     }
-    if (!userInfo.phone.trim()) {
-      toast.error('Vui lòng nhập số điện thoại');
-      return false;
-    }
-    if (!userInfo.address.trim()) {
-      toast.error('Vui lòng nhập địa chỉ');
-      return false;
+    // Phone is optional; validate format only if provided
+    if (userInfo.phone && userInfo.phone.trim()) {
+      const phoneRegex = /^[0-9]{10,11}$/;
+      if (!phoneRegex.test(userInfo.phone.replace(/\s/g, ''))) {
+        toast.error('Số điện thoại không hợp lệ');
+        return false;
+      }
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userInfo.email)) {
       toast.error('Email không hợp lệ');
-      return false;
-    }
-
-    const phoneRegex = /^[0-9]{10,11}$/;
-    if (!phoneRegex.test(userInfo.phone.replace(/\s/g, ''))) {
-      toast.error('Số điện thoại không hợp lệ');
       return false;
     }
 
@@ -181,7 +209,9 @@ export default function OrderPageClient() {
             className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" />
             Quay lại
+         
           </button>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Đặt hàng</h1>
           <p className="text-gray-600">Hoàn tất thông tin để đặt hàng</p>
@@ -231,7 +261,7 @@ export default function OrderPageClient() {
                 {/* Số điện thoại */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Số điện thoại *
+                    Số điện thoại (không bắt buộc)
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -241,23 +271,6 @@ export default function OrderPageClient() {
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="0123456789"
-                    />
-                  </div>
-                </div>
-
-                {/* Địa chỉ */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Địa chỉ nhận hàng *
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <textarea
-                      value={userInfo.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
-                      rows={3}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Nhập địa chỉ chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)"
                     />
                   </div>
                 </div>
@@ -375,7 +388,7 @@ export default function OrderPageClient() {
               <button
                 onClick={handleSubmitOrder}
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-orange-300 text-white py-3 px-4 rounded-lg hover:bg-orange-400 transition-colors font-medium mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Đang xử lý...' : 'Thanh toán'}
               </button>

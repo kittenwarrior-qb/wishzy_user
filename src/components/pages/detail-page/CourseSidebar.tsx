@@ -59,8 +59,14 @@ const CourseSidebar = ({ course }: CourseSidebarProps) => {
           </span>
         </div>
 
-        <div className="flex flex-col items-start gap-2.5 mt-6">
-            <AddToCartForCourseDetail course={course} label="Thêm vào giỏ hàng" inCartLabel="Đã thêm vào giỏ hàng" className='w-full' />
+        <div className="flex flex-col items-start gap-2.5 mt-6 bg-[orange] w-full"> 
+          <AddToCartForCourseDetail 
+            course={course} 
+            label="Thêm vào giỏ hàng" 
+            inCartLabel="Đã thêm vào giỏ hàng" 
+            className='w-full bg-[#ff9500] text-black rounded-[5px]' 
+          />
+           
         </div>
 
         <div className="flex flex-col items-start gap-2.5 mt-6">

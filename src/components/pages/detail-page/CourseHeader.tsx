@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Clock, Users, Flag, Star, Eye, Calendar, Heart, Share2 } from "lucide-react";
 import type { CourseDetail } from "@/types/schema/course.schema";
 import Image from "next/image";
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { formatDuration } from "@/lib/utils";
 import { mapLevel } from "@/lib/utils";
+import { isWishlisted, toggleWishlist } from "@/lib/wishlist";
 
 
 const CourseHeader = ({ course }: { course: CourseDetail }) => {
@@ -26,8 +27,12 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
       text: new Date(course.createdAt).toLocaleDateString('vi-VN'),
     },
   ];
+  const [liked, setLiked] = useState(false);
 
-  const actionIcons = [Heart, Share2];
+  useEffect(() => {
+    // Initialize wishlist state on mount
+    setLiked(isWishlisted(course._id));
+  }, [course._id]);
 
   return (
     <div className="w-full max-w-[1280px] mx-auto">
@@ -107,12 +112,18 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
               </div>
 
               <div className="flex items-center justify-between gap-4 relative">
-                {actionIcons.map((IconComponent, index) => (
-                  <IconComponent
-                    key={index}
-                    className="!relative !w-6 !h-6 cursor-pointer hover:text-gray-600 transition-colors"
+                <button
+                  type="button"
+                  aria-label={liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
+                  aria-pressed={liked}
+                  onClick={() => setLiked(toggleWishlist(course._id))}
+                  className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+                >
+                  <Heart
+                    className={`!relative !w-6 !h-6 ${liked ? 'text-red-500 fill-red-500' : 'text-gray-800'} transition-colors`}
                   />
-                ))}
+                </button>
+                <Share2 className="!relative !w-6 !h-6 cursor-pointer hover:text-gray-600 transition-colors" />
               </div>
             </div>
           </div>
