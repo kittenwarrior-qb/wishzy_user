@@ -273,7 +273,7 @@ const Header = () => {
                                         <CartComponent />
                                         <AuthComponent />
                                     </div>
-                                    <Button className="w-[200px] h-10 px-[11px] py-0 bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors">
+                                    <Button  className="w-[200px] h-10 px-[11px] py-0 bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors">
                                         Khám phá khóa học
                                     </Button>
                                 </div>
