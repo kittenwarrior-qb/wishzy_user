@@ -5,6 +5,7 @@ import { useCartStore } from "@/store/slices/cart";
 import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -75,7 +76,7 @@ export default function CartPageClient() {
   };
 
   const handleContinueShopping = () => {
-    router.push(`/${locale}/courses`);
+    router.push(`/${locale}/`);
   };
 
   return (
@@ -112,8 +113,7 @@ export default function CartPageClient() {
                       <label className="inline-flex items-center gap-2 text-sm text-gray-700">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 bg-orange-500 checked:bg-orange-500"
-                          checked={allSelected}
+                          className="h-4 w-4 accent-[#FFA500]"
                           onChange={toggleSelectAll}
                         />
                         Chọn tất cả
@@ -129,12 +129,12 @@ export default function CartPageClient() {
 
                   <div className="space-y-6">
                     {items.map((item) => (
-                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg">
+                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-[#ff9500] rounded-lg">
                         {/* Select Checkbox */}
                         <div className="pt-1">
                           <input
                             type="checkbox"
-                            className="h-4 w-4 bg-orange-500  checked:bg-orange-500"
+                             className="h-4 w-4 accent-[#FFA500]"
                             checked={selectedIds.includes(item._id)}
                             onChange={() => toggleSelect(item._id)}
                           />
@@ -166,7 +166,7 @@ export default function CartPageClient() {
                                 <span>{item.numberOfStudents} học viên</span>
                               </div>
                               <div className="flex items-center space-x-2">
-                                <span className="text-lg font-bold text-blue-600">
+                                <span className="text-lg font-bold text-[#ff9500]">
                                   {formatPrice(item.price)}
                                 </span>
                                 {item.originalPrice && item.originalPrice > item.price && (
@@ -216,20 +216,17 @@ export default function CartPageClient() {
                   </div>
                 </div>
                 
-                <button 
-                  onClick={handleProceedToCheckout}
-                  className="w-full bg-[orange] text-white py-3 px-4 rounded-lg hover:bg-[orange]/80 transition-colors font-medium flex items-center justify-center gap-2"
-                >
-                  Tiến hành thanh toán
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-                <div className="mt-4 text-center">
-                  <button 
-                    onClick={handleContinueShopping}
-                    className="text-blue-600 hover:text-blue-700 font-medium"
+                <div className="flex flex-col items-center">
+                  <Button 
+                    onClick={handleProceedToCheckout}
+                    className='h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
                   >
-                    Tiếp tục mua sắm
-                  </button>
+                    Tiến hành thanh toán
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="mt-4 text-center">
+                  <a className="cursor-pointer hover:text-[#ff9500]" onClick={handleContinueShopping}>Tiếp tục mua sắm</a>
                 </div>
 
                 {/* Coupon Section */}

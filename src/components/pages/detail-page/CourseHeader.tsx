@@ -27,12 +27,22 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
       text: new Date(course.createdAt).toLocaleDateString('vi-VN'),
     },
   ];
-  const [liked, setLiked] = useState(false);
 
-  useEffect(() => {
-    // Initialize wishlist state on mount
-    setLiked(isWishlisted(course._id));
-  }, [course._id]);
+  const renderStars = (rating: number) => {
+    const totalStars = 5;
+    return (
+      <div className="flex">
+        {Array.from({ length: totalStars }, (_, index) => (
+          <Star
+            key={index}
+            className={`w-5 h-5 ${
+              index < rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
+            }`}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[1280px] mx-auto">
@@ -80,10 +90,7 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
               </div>
 
               <div className="flex items-center justify-center gap-2.5 relative">
-                <Star className="relative flex-[0_0_auto] w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <div className="mt-[-1.00px] [font-family:'Be_Vietnam_Pro-Regular',Helvetica] font-normal text-[#777777] text-xs leading-[18px] relative w-fit tracking-[0] whitespace-nowrap">
-                  ({course.averageRating || course.rating})
-                </div>
+                {renderStars(course.averageRating || course.rating)}
               </div>
             </div>
 
@@ -111,7 +118,7 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-4 relative">
+              {/* <div className="flex items-center justify-between gap-4 relative">
                 <button
                   type="button"
                   aria-label={liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
@@ -119,12 +126,10 @@ const CourseHeader = ({ course }: { course: CourseDetail }) => {
                   onClick={() => setLiked(toggleWishlist(course._id))}
                   className="p-1 rounded-md hover:bg-gray-100 transition-colors"
                 >
-                  <Heart
-                    className={`!relative !w-6 !h-6 ${liked ? 'text-red-500 fill-red-500' : 'text-gray-800'} transition-colors`}
-                  />
+                 
                 </button>
                 <Share2 className="!relative !w-6 !h-6 cursor-pointer hover:text-gray-600 transition-colors" />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
