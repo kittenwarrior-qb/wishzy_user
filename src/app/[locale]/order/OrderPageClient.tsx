@@ -349,8 +349,8 @@ export default function OrderPageClient () {
             </div>
 
             {/* Phương thức thanh toán */}
-            <div className='bg-white rounded-lg shadow-sm p-6'>
-              <h2 className='text-xl font-semibold mb-6 flex items-center gap-2'>
+            <div className='bg-white rounded-lg shadow-sm p-6 flex flex-col gap-6'>
+              <h2 className='text-xl font-semibold flex items-center gap-2'>
                 <CreditCard className='h-5 w-5' />
                 Phương thức thanh toán
               </h2>
@@ -386,45 +386,51 @@ export default function OrderPageClient () {
                   </div>
                 </div>
               </div>
+
+              <div>
+                <h2 className='text-xl font-semibold mb-6 flex items-center gap-2'>
+                  Thông tin đơn hàng
+                </h2>
+
+                {/* Danh sách sản phẩm */}
+                <div className='space-y-4 mb-6'>
+                  {items.map((item: CartItem) => (
+                    <div key={item._id} className='flex gap-3'>
+                      <img
+                        src={item.thumbnail}
+                        alt={item.courseName}
+                        width={64}
+                        height={64}
+                        className='w-16 h-16 object-cover rounded-lg'
+                      />
+                      <div className='flex-1'>
+                        <h4 className='font-medium text-sm line-clamp-2'>
+                          {item.courseName}
+                        </h4>
+                        <p className='text-xs text-gray-500'>{item.instructor}</p>
+                        <div className='flex justify-between items-center mt-1'>
+                          <span className='text-xs text-gray-500'>
+                            x{item.quantity}
+                          </span>
+                          <span className='font-medium text-sm text-[#ff9500]'>
+                            {formatPrice(item.price)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+            </div>
             </div>
           </div>
 
           {/* Thông tin đơn hàng - Bên phải */}
           <div className='lg:col-span-5 mt-8 lg:mt-0'>
-            <div className='bg-white rounded-lg shadow-sm p-6 sticky top-8'>
-              <h2 className='text-xl font-semibold mb-6'>Thông tin đơn hàng</h2>
-
-              {/* Danh sách sản phẩm */}
-              <div className='space-y-4 mb-6'>
-                {items.map((item: CartItem) => (
-                  <div key={item._id} className='flex gap-3'>
-                    <img
-                      src={item.thumbnail}
-                      alt={item.courseName}
-                      width={64}
-                      height={64}
-                      className='w-16 h-16 object-cover rounded-lg'
-                    />
-                    <div className='flex-1'>
-                      <h4 className='font-medium text-sm line-clamp-2'>
-                        {item.courseName}
-                      </h4>
-                      <p className='text-xs text-gray-500'>{item.instructor}</p>
-                      <div className='flex justify-between items-center mt-1'>
-                        <span className='text-xs text-gray-500'>
-                          x{item.quantity}
-                        </span>
-                        <span className='font-medium text-sm'>
-                          {formatPrice(item.price)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className='bg-white rounded-lg shadow-sm p-6 sticky top-8 flex flex-col gap-6'>
+              <h2 className='text-xl font-semibold'>Thông tin đơn hàng</h2>
 
               {/* Tổng tiền */}
-              <div className='border-t pt-4 space-y-2'>
+              <div className='space-y-2 flex flex-col gap-2'>
                 <div className='flex justify-between text-sm'>
                   <span>Tạm tính</span>
                   <span>{formatPrice(subtotal)}</span>
@@ -435,9 +441,10 @@ export default function OrderPageClient () {
                     <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
-                <div className='flex justify-between text-lg font-semibold border-t pt-2'>
+               <hr className="bg-[#d9d9d9] h-[1px] border-0" />
+                <div className='flex justify-between text-lg font-semibold'>
                   <span>Tổng cộng</span>
-                  <span className='text-blue-600'>{formatPrice(total)}</span>
+                  <span className='text-[#ff9500]'>{formatPrice(total)}</span>
                 </div>
               </div>
 
@@ -445,12 +452,12 @@ export default function OrderPageClient () {
               <Button
                 onClick={handleSubmitOrder}
                 disabled={isSubmitting}
-                className='w-full p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
+                className='w-full p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-2xl font-medium text-black text-base leading-6 transition-colors'
               >
                 {isSubmitting ? 'Đang xử lý...' : 'Thanh toán'}
               </Button>
 
-              <p className='text-xs text-gray-500 text-center mt-3'>
+              <p className='text-xs text-gray-500 text-center'>
                 Bằng việc đặt hàng, bạn đồng ý với điều khoản sử dụng của Wishzy
               </p>
             </div>
