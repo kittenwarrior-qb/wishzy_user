@@ -97,7 +97,7 @@ const CartComponent: React.FC = () => {
               </div>
 
               <Link href='/cart' className='w-full'>
-                <Button className='w-full bg-[#ffa500] hover:bg-[#ff9500] text-sm'>
+                <Button className='w-full h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'>
                   Xem giỏ hàng
                 </Button>
               </Link>
