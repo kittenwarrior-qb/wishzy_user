@@ -452,7 +452,7 @@ export default function OrderPageClient () {
               <Button
                 onClick={handleSubmitOrder}
                 disabled={isSubmitting}
-                className='w-full p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-2xl font-medium text-black text-base leading-6 transition-colors'
+                className=' h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
               >
                 {isSubmitting ? 'Đang xử lý...' : 'Thanh toán'}
               </Button>
