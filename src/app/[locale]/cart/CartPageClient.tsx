@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useCartStore } from "@/store/slices/cart";
-import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { ShoppingBag, ArrowRight, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -94,12 +95,11 @@ export default function CartPageClient() {
             <ShoppingBag className="mx-auto h-24 w-24 text-gray-300 mb-4" />
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Giỏ hàng trống</h2>
             <p className="text-gray-600 mb-8">Hãy thêm một số khóa học vào giỏ hàng của bạn</p>
-            <button 
+            <Button className="w-[200px] h-10 px-[11px] py-0 bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors"
               onClick={handleContinueShopping}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Khám phá khóa học
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
@@ -111,19 +111,15 @@ export default function CartPageClient() {
                     <h2 className="text-xl font-semibold text-gray-900">Khóa học đã chọn</h2>
                     <div className="flex items-center gap-4">
                       <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-                        <input
+                        <Input
                           type="checkbox"
                           className="h-4 w-4 accent-[#FFA500]"
                           onChange={toggleSelectAll}
+                          checked={allSelected}
                         />
                         Chọn tất cả
                       </label>
-                      <button
-                        onClick={clearCart}
-                        className="text-red-600 hover:text-red-700 text-sm font-medium"
-                      >
-                        Xóa tất cả
-                      </button>
+                      <div onClick={clearCart} className="text-red-600 hover:text-red-700 text-sm font-medium cursor-pointer">  Xóa tất cả</div>
                     </div>
                   </div>
 
@@ -132,9 +128,9 @@ export default function CartPageClient() {
                       <div key={item._id} className="flex items-start space-x-4 p-4 border border-[#ff9500] rounded-lg">
                         {/* Select Checkbox */}
                         <div className="pt-1">
-                          <input
+                          <Input
                             type="checkbox"
-                             className="h-4 w-4 accent-[#FFA500]"
+                            className="h-4 w-4 accent-[#FFA500]"
                             checked={selectedIds.includes(item._id)}
                             onChange={() => toggleSelect(item._id)}
                           />
@@ -177,12 +173,13 @@ export default function CartPageClient() {
                               </div>
                             </div>
                             <div className="flex items-center">
-                              <button
+                              <Button
+                                variant="ghost"
                                 onClick={() => handleRemoveItem(item._id)}
-                                className="p-1 rounded-full hover:bg-red-50 text-red-600"
+                                className="text-red-600"
                               >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                                <X className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
                         </div>
@@ -211,7 +208,7 @@ export default function CartPageClient() {
                   )}
                   <hr className="border-gray-200" />
                   <div className="flex justify-between text-orange-500 font-semibold">
-                    <span>Tổng cộng</span>
+                    <span>Tổng cộng ({items.length} khóa học):</span>
                     <span className="text-orange-600">{formatPrice(selTotal)}</span>
                   </div>
                 </div>
@@ -233,14 +230,13 @@ export default function CartPageClient() {
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <h3 className="font-medium mb-3">Mã giảm giá</h3>
                   <div className="flex gap-2">
-                    <input
+                    <Input
                       type="text"
                       placeholder="Nhập mã giảm giá"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <Button>
                       Áp dụng
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

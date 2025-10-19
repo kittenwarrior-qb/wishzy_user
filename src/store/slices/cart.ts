@@ -1,28 +1,31 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export interface CartItem {
-  _id: string;
-  courseName: string;
-  price: number;
-  originalPrice?: number;
-  thumbnail: string;
-  slug: string;
-  level: string;
-  numberOfStudents: number;
-  totalDuration: number;
-  quantity: number;
-  createdBy: {
+  export interface CartItem {
     _id: string;
-    fullName: string;
-    email: string;
-    avatar?: string;
-  };
-  subject: {
-    _id: string;
-    subjectName: string;
+    courseName: string;
+    price: number;
+    originalPrice?: number;
+    thumbnail: string;
     slug: string;
-  };
+    level: string;
+    numberOfStudents: number;
+    totalDuration: number;
+    quantity: number;
+    // Optional metadata for UI display
+    averageRating?: number;
+    instructor?: string;
+    createdBy: {
+      _id: string;
+      fullName: string;
+      email: string;
+      avatar?: string;
+    };
+    subject: {
+      _id: string;
+      subjectName: string;
+      slug: string;
+    };
   grade: {
     _id: string;
     gradeName: string;
