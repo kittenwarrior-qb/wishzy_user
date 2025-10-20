@@ -11,6 +11,13 @@ import { useAuthStore } from '@/store/slices/auth'
 import { UserService } from '@/services/user.service'
 import { Button } from '@/components/ui/button'
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
+import {
   Form,
   FormControl,
   FormField,
@@ -296,16 +303,34 @@ export default function OrderPageClient () {
   return (
     <div className='min-h-screen bg-gray-50'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        {/* Breadcrumb */}
+        <div className='mb-4'>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/${locale}`}>Trang chủ</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/${locale}/cart`}>Giỏ hàng</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                Đặt hàng
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
         {/* Header */}
         <div className='mb-8'>
-          <button
+          {/* <button
             onClick={() => router.back()}
             className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-4'
           >
             <ArrowLeft className='h-4 w-4' />
             <ArrowLeft className='h-4 w-4' />
             Quay lại
-          </button>
+          </button> */}
           <h1 className='text-3xl font-bold text-gray-900 mb-2'>Đặt hàng</h1>
           <p className='text-gray-600'>Hoàn tất thông tin để đặt hàng</p>
         </div>
