@@ -11,6 +11,13 @@ import { useAuthStore } from '@/store/slices/auth'
 import { UserService } from '@/services/user.service'
 import { Button } from '@/components/ui/button'
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
+import {
   Form,
   FormControl,
   FormField,
@@ -46,8 +53,7 @@ function formatPrice (price: number): string {
 }
 
 export default function OrderPageClient () {
-  const { items, subtotal, discount, total, clearCart, replaceCart } =
-    useCartStore()
+  const { items } = useCartStore()
   const router = useRouter()
   const pathname = usePathname()
   const locale = pathname?.split('/')?.[1] || 'vi'
@@ -70,6 +76,26 @@ export default function OrderPageClient () {
   const { token, user } = useAuthStore()
 
   const [loading, setLoading] = useState<boolean>(true)
+  // Selected items for checkout (from cart selection)
+  const [selectedItems, setSelectedItems] = useState<CartItem[]>([])
+  const [selectedTotals, setSelectedTotals] = useState({
+    subtotal: 0,
+    discount: 0,
+    total: 0
+  })
+
+  const computeTotals = (arr: CartItem[]) => {
+    const st = arr.reduce((s, it) => s + it.price * (it.quantity ?? 1), 0)
+    const dis = arr.reduce((s, it) => {
+      const original = (it as any).originalPrice ?? it.price
+      return s + Math.max(0, (original - it.price)) * (it.quantity ?? 1)
+    }, 0)
+    return {
+      subtotal: st,
+      discount: dis,
+      total: st
+    }
+  }
 
   // Enforce authentication: redirect to login if not logged in (hydration-safe)
   useEffect(() => {
@@ -134,24 +160,39 @@ export default function OrderPageClient () {
     fetchProfile()
   }, [router])
 
-  // Hydrate giỏ hàng từ checkout_items nếu Zustand rỗng, sau đó mới quyết định redirect
+  // Hydrate danh sách checkout từ localStorage (ưu tiên checkout_items), fallback sang items trong store
   useEffect(() => {
-    if (items.length > 0) return // đã có giỏ hàng
     try {
-      const rawItems = localStorage.getItem('checkout_items')
+      const rawItems = typeof window !== 'undefined' ? localStorage.getItem('checkout_items') : null
+      const rawTotals = typeof window !== 'undefined' ? localStorage.getItem('checkout_totals') : null
+
       if (rawItems) {
         const parsedItems = JSON.parse(rawItems) as CartItem[]
         if (Array.isArray(parsedItems) && parsedItems.length > 0) {
-          replaceCart(parsedItems)
-          return // đã hydrate, không redirect
+          setSelectedItems(parsedItems)
+          if (rawTotals) {
+            const t = JSON.parse(rawTotals) as { subtotal: number; discount: number; total: number }
+            setSelectedTotals(t)
+          } else {
+            setSelectedTotals(computeTotals(parsedItems))
+          }
+          return
         }
       }
-      // nếu không hydrate được thì redirect về cart để thêm sản phẩm
+
+      // Fallback: nếu chưa có checkout_items nhưng store có items thì dùng tạm
+      if (items.length > 0) {
+        setSelectedItems(items)
+        setSelectedTotals(computeTotals(items))
+        return
+      }
+
+      // Không có gì để thanh toán -> quay lại giỏ hàng
       router.push(`/${locale}/cart`)
     } catch {
       router.push(`/${locale}/cart`)
     }
-  }, [items.length, router, locale, replaceCart])
+  }, [items, router, locale])
 
   const handleInputChange = (field: keyof UserInfo, value: string) => {
     setUserInfo(prev => ({
@@ -198,9 +239,9 @@ export default function OrderPageClient () {
           toast.error('Bạn cần đăng nhập để thanh toán.')
           return
         }
-        const courseIds = items.map(i => i._id)
-        const first = items[0]?.courseName || 'Khóa học'
-        const extra = items.length - 1
+        const courseIds = selectedItems.map(i => i._id)
+        const first = selectedItems[0]?.courseName || 'Khóa học'
+        const extra = selectedItems.length - 1
         const orderInfo =
           extra > 0
             ? `${first} +${extra} khóa khác`
@@ -210,7 +251,8 @@ export default function OrderPageClient () {
           token
         )
         if (res.success && res.paymentUrl) {
-          localStorage.setItem('checkout_items', JSON.stringify(items))
+          localStorage.setItem('checkout_items', JSON.stringify(selectedItems))
+          localStorage.setItem('checkout_totals', JSON.stringify(selectedTotals))
           window.location.href = res.paymentUrl
           return
         } else {
@@ -219,13 +261,13 @@ export default function OrderPageClient () {
       } else {
         const orderId = Date.now().toString()
         const orderData: OrderData = {
-          items,
+          items: selectedItems,
           userInfo,
           paymentMethod,
-          totals: { subtotal, discount, total }
+          totals: selectedTotals
         }
         localStorage.setItem(`order_${orderId}`, JSON.stringify(orderData))
-        clearCart()
+        // Tùy yêu cầu: có thể chỉ nên xóa các item đã thanh toán thay vì clear toàn bộ giỏ
         toast.success('Đặt hàng thành công!')
         router.push(`/${locale}/order-success?id=${orderId}&payment=cod`)
       }
@@ -237,7 +279,7 @@ export default function OrderPageClient () {
     }
   }
 
-  if (items.length === 0) {
+  if (selectedItems.length === 0) {
     return (
       <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
         <div className='text-center'>
@@ -261,16 +303,34 @@ export default function OrderPageClient () {
   return (
     <div className='min-h-screen bg-gray-50'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        {/* Breadcrumb */}
+        <div className='mb-4'>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/${locale}`}>Trang chủ</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/${locale}/cart`}>Giỏ hàng</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                Đặt hàng
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
         {/* Header */}
         <div className='mb-8'>
-          <button
+          {/* <button
             onClick={() => router.back()}
             className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-4'
           >
             <ArrowLeft className='h-4 w-4' />
             <ArrowLeft className='h-4 w-4' />
             Quay lại
-          </button>
+          </button> */}
           <h1 className='text-3xl font-bold text-gray-900 mb-2'>Đặt hàng</h1>
           <p className='text-gray-600'>Hoàn tất thông tin để đặt hàng</p>
         </div>
@@ -394,7 +454,7 @@ export default function OrderPageClient () {
 
                 {/* Danh sách sản phẩm */}
                 <div className='space-y-4 mb-6'>
-                  {items.map((item: CartItem) => (
+                  {selectedItems.map((item: CartItem) => (
                     <div key={item._id} className='flex gap-3'>
                       <img
                         src={item.thumbnail}
@@ -433,18 +493,18 @@ export default function OrderPageClient () {
               <div className='space-y-2 flex flex-col gap-2'>
                 <div className='flex justify-between text-sm'>
                   <span>Tạm tính</span>
-                  <span>{formatPrice(subtotal)}</span>
+                  <span>{formatPrice(selectedTotals.subtotal)}</span>
                 </div>
-                {discount > 0 && (
+                {selectedTotals.discount > 0 && (
                   <div className='flex justify-between text-sm text-green-600'>
                     <span>Tiết kiệm</span>
-                    <span>-{formatPrice(discount)}</span>
+                    <span>-{formatPrice(selectedTotals.discount)}</span>
                   </div>
                 )}
                <hr className="bg-[#d9d9d9] h-[1px] border-0" />
                 <div className='flex justify-between text-lg font-semibold'>
                   <span>Tổng cộng</span>
-                  <span className='text-[#ff9500]'>{formatPrice(total)}</span>
+                  <span className='text-[#ff9500]'>{formatPrice(selectedTotals.total)}</span>
                 </div>
               </div>
 
@@ -452,7 +512,7 @@ export default function OrderPageClient () {
               <Button
                 onClick={handleSubmitOrder}
                 disabled={isSubmitting}
-                className='w-full p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-2xl font-medium text-black text-base leading-6 transition-colors'
+                className=' h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
               >
                 {isSubmitting ? 'Đang xử lý...' : 'Thanh toán'}
               </Button>

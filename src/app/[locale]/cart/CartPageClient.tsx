@@ -6,7 +6,22 @@ import { ShoppingBag, ArrowRight, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -25,6 +40,13 @@ export default function CartPageClient() {
   const pathname = usePathname();
   const locale = (pathname?.split('/')?.[1] || 'vi');
   // Cart page should only reflect items that user explicitly added to cart (persisted by Zustand)
+
+  // Form for coupon input (mirror OrderPageClient pattern)
+  const form = useForm({
+    defaultValues: {
+      coupon: "",
+    },
+  });
 
   // Selection state: default select all items; keep in sync when cart changes
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -84,9 +106,22 @@ export default function CartPageClient() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
+        <div className="mb-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={`/${locale}`}>Trang chủ</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                Giỏ hàng
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Giỏ hàng của bạn</h1>
-          <p className="text-gray-600">{items.length} khóa học trong giỏ hàng</p>
+          <p className="text-gray-600">{selectedItems.length} khóa học trong giỏ hàng</p>
         </div>
 
         {items.length === 0 ? (
@@ -125,12 +160,12 @@ export default function CartPageClient() {
 
                   <div className="space-y-6">
                     {items.map((item) => (
-                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-[#ff9500] rounded-lg">
+                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-[#ff9500] rounded-lg transition duration-200 hover:shadow-md hover:bg-orange-50 ">
                         {/* Select Checkbox */}
                         <div className="pt-1">
                           <Input
                             type="checkbox"
-                            className="h-4 w-4 accent-[#FFA500]"
+                            className="h-4 w-4 accent-[#FFA500] cursor-pointer"
                             checked={selectedIds.includes(item._id)}
                             onChange={() => toggleSelect(item._id)}
                           />
@@ -172,13 +207,13 @@ export default function CartPageClient() {
                                 )}
                               </div>
                             </div>
-                            <div className="flex items-center">
+                            <div className="flex items-center cursor-pointer">
                               <Button
                                 variant="ghost"
                                 onClick={() => handleRemoveItem(item._id)}
-                                className="text-red-600"
+                                className="text-red-600 cursor-pointer"
                               >
-                                <X className="h-4 w-4" />
+                                <X className="h-4 w-4 cursor-pointer" />
                               </Button>
                             </div>
                           </div>
@@ -208,7 +243,7 @@ export default function CartPageClient() {
                   )}
                   <hr className="border-gray-200" />
                   <div className="flex justify-between text-orange-500 font-semibold">
-                    <span>Tổng cộng ({items.length} khóa học):</span>
+                    <span>Tổng cộng ({selectedItems.length} khóa học):</span>
                     <span className="text-orange-600">{formatPrice(selTotal)}</span>
                   </div>
                 </div>
@@ -216,7 +251,7 @@ export default function CartPageClient() {
                 <div className="flex flex-col items-center">
                   <Button 
                     onClick={handleProceedToCheckout}
-                    className='h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
+                    className='w-full h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
                   >
                     Tiến hành thanh toán
                     <ArrowRight className="h-4 w-4" />
@@ -229,16 +264,43 @@ export default function CartPageClient() {
                 {/* Coupon Section */}
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <h3 className="font-medium mb-3">Mã giảm giá</h3>
-                  <div className="flex gap-2">
-                    <Input
-                      type="text"
-                      placeholder="Nhập mã giảm giá"
-                    />
-                    <Button>
-                      Áp dụng
-                    </Button>
-                  </div>
+                  <Form {...form}>
+                    <div className="flex gap-2">
+                      <FormField
+                        name="coupon"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="sr-only">Mã giảm giá</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Nhập mã giảm giá"
+                                className='rounded-md py-5 border-primary'
+                                value={field.value}
+                                onChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        className=' h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
+                        onClick={() => {
+                          const code = form.getValues("coupon").trim();
+                          if (!code) {
+                            toast.error("Vui lòng nhập mã giảm giá");
+                            return;
+                          }
+                          // Placeholder: handle coupon apply here if needed
+                          toast.success(`Đã nhập mã: ${code}`);
+                        }}
+                      >
+                        Áp dụng
+                      </Button>
+                    </div>
+                  </Form>
                 </div>
+                
               </div>
             </div>
           </div>
