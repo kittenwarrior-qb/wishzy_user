@@ -140,12 +140,12 @@ export default function CartPageClient() {
 
                   <div className="space-y-6">
                     {items.map((item) => (
-                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-[#ff9500] rounded-lg">
+                      <div key={item._id} className="flex items-start space-x-4 p-4 border border-[#ff9500] rounded-lg transition duration-200 hover:shadow-md hover:bg-orange-50 ">
                         {/* Select Checkbox */}
                         <div className="pt-1">
                           <Input
                             type="checkbox"
-                            className="h-4 w-4 accent-[#FFA500]"
+                            className="h-4 w-4 accent-[#FFA500] cursor-pointer"
                             checked={selectedIds.includes(item._id)}
                             onChange={() => toggleSelect(item._id)}
                           />
@@ -187,13 +187,13 @@ export default function CartPageClient() {
                                 )}
                               </div>
                             </div>
-                            <div className="flex items-center">
+                            <div className="flex items-center cursor-pointer">
                               <Button
                                 variant="ghost"
                                 onClick={() => handleRemoveItem(item._id)}
-                                className="text-red-600"
+                                className="text-red-600 cursor-pointer"
                               >
-                                <X className="h-4 w-4" />
+                                <X className="h-4 w-4 cursor-pointer" />
                               </Button>
                             </div>
                           </div>

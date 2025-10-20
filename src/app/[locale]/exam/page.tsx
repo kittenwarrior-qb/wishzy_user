@@ -1,8 +1,11 @@
 
 "use client";
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import styles from './page.module.css';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { CourseService } from '@/services/course.service';
+import CourseListCard from '@/components/shared/course-list-card';
+import { CourseList } from '@/types/schema/course.schema';
+import { Button } from '@/components/ui/button';
 
 // Chưa xác định nên xét type tạm 
 interface Question {
@@ -34,162 +37,128 @@ interface ExamResult {
 
 export default function ExamPage() {
   const searchParams = useSearchParams();
-  const examId = searchParams.get('examId');
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname?.split('/')?.[1] || 'vi';
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<Record<number, AnswerValue>>({});
-  const [result, setResult] = useState<ExamResult | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const [inputCourseId, setInputCourseId] = useState<string>(searchParams.get('courseId') || '');
+  const [loadingByCourse, setLoadingByCourse] = useState<boolean>(false);
+  const [exam, setExam] = useState<{ examId: string; title?: string; questionsCount: number } | null>(null);
+  const [relatedCourses, setRelatedCourses] = useState<CourseList[]>([]);
+  const [exams, setExams] = useState<Array<{ _id: string; courseId: string; title: string; questions?: any[] }>>([])
+  const [loadingExams, setLoadingExams] = useState<boolean>(false)
+  const [visibleCount, setVisibleCount] = useState<number>(6)
 
   useEffect(() => {
-    if (!examId) return;
-    fetch(`${API_BASE.replace(/\/$/, '')}/exams/questions/${encodeURIComponent(examId)}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    })
-      .then(res => res.json())
-      .then((data: { questions?: Question[] }) => {
-        setQuestions(data.questions || []);
-        setLoading(false);
+    CourseService.getHotCourse()
+      .then(res => setRelatedCourses((res as any).courses || []))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    setLoadingExams(true)
+    fetch(`${API_BASE.replace(/\/$/, '')}/exams/getAllExams`)
+      .then(async res => {
+        if (!res.ok) throw new Error(await res.text())
+        return res.json()
       })
-      .catch(err => console.error('Lỗi fetch câu hỏi:', err));
-  }, [examId, API_BASE]);
+      .then((data) => {
+        if (Array.isArray(data)) setExams(data)
+        else if (Array.isArray((data as any).exams)) setExams((data as any).exams)
+        else setExams([])
+      })
+      .catch(() => setExams([]))
+      .finally(() => setLoadingExams(false))
+  }, [API_BASE])
 
-  // Handle single-answer question (radio)
-  const handleSingleAnswerChange = (index: number, value: string) => {
-    setAnswers(prev => ({ ...prev, [index]: value }));
-  };
+  // Fetch exam by courseId (optional quick search)
+  useEffect(() => {
+    const courseId = searchParams.get('courseId') || '';
+    if (!courseId) {
+      setExam(null);
+      return;
+    }
+    setLoadingByCourse(true)
+    fetch(`${API_BASE.replace(/\/$/, '')}/exams/questions?courseId=${encodeURIComponent(courseId)}`)
+      .then(async res => {
+        if (!res.ok) throw new Error(await res.text())
+        return res.json()
+      })
+      .then((data: { examId?: string; questions?: unknown[]; title?: string }) => {
+        if (data?.examId) {
+          setExam({ examId: data.examId, title: data.title, questionsCount: (data.questions?.length ?? 0) as number })
+        } else {
+          setExam(null)
+        }
+      })
+      .catch(() => setExam(null))
+      .finally(() => setLoadingByCourse(false))
+  }, [searchParams, API_BASE])
 
-  // Handle multi-answer question (checkbox toggle)
-  const handleMultiToggle = (index: number, value: string, checked: boolean) => {
-    setAnswers(prev => {
-      const current = prev[index];
-      const arr = Array.isArray(current) ? current : [];
-      const next = checked ? Array.from(new Set([...arr, value])) : arr.filter(v => v !== value);
-      return { ...prev, [index]: next };
-    });
-  };
-
-  const handleSubmit = async () => {
-    if (!examId) return;
-    const userAnswers: SubmitAnswer[] = Object.entries(answers).map(([idx, ans]) => ({
-      index: parseInt(idx, 10), 
-      answer: ans,
-    }));
-    const res = await fetch(`${API_BASE.replace(/\/$/, '')}/exams/submit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({ examId, userAnswers }),
-    });
-    const data: ExamResult = await res.json();
-    setResult(data);
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>Đề thi</h1>
-            <span className={styles.badge}>Đang tải...</span>
-          </div>
-          <div className={styles.examCard}>
-            <div className={styles.meta}>
-              <span className={styles.skeleton} style={{ width: 160 }} />
-              <span className={styles.skeleton} style={{ width: 100 }} />
-            </div>
-            <div className={styles.skeleton} />
-            <div style={{ height: 10 }} />
-            <div className={styles.skeleton} />
-            <div style={{ height: 10 }} />
-            <div className={styles.skeleton} />
-          </div>
-        </div>
-      </div>
-    );
+  const handleSearch = () => {
+    const v = inputCourseId.trim()
+    router.push(`/${locale}/exam${v ? `?courseId=${encodeURIComponent(v)}` : ''}`)
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Đề thi trắc nghiệm</h1>
-          {examId && <span className={styles.badge}>Mã đề: {examId.slice(-6)}</span>}
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold">Đề thi</h1>
+          <p className="text-gray-600">Chọn khóa học để xem danh sách đề thi</p>
         </div>
 
-        {questions.map((q, i) => (
-          <div key={i} className={styles.examCard} style={{ marginBottom: 16 }}>
-            <div className={styles.meta}>Câu hỏi {i + 1}</div>
-            <p className={styles.question}>{q.question}</p>
-            <div className={styles.options}>
-              {q.options.map((opt: string) => {
-                const letter = (opt.match(/^[A-D]/)?.[0]) || opt;
-                // Suy luận cho câu hỏi chọn nhiều nếu backend không cung cấp isMultiple
-                const inferredMulti = /(chọn\s*\d+|chọn nhiều|chọn tat ca|chọn tất cả)/i.test(q.question);
-                const isMultiple = q.isMultiple ?? inferredMulti;
-                const inputType = isMultiple ? 'checkbox' : 'radio';
-                const selected = answers[i];
-                return (
-                  <label key={opt} className={styles.option}>
-                    <input
-                      className={styles.radio}
-                      type={inputType}
-                      name={`q${i}`}
-                      value={letter}
-                      checked={
-                        isMultiple
-                          ? Array.isArray(selected) && selected.includes(letter)
-                          : selected === letter
-                      }
-                      onChange={(e) =>
-                        isMultiple
-                          ? handleMultiToggle(i, letter, e.currentTarget.checked)
-                          : handleSingleAnswerChange(i, letter)
-                      }
-                    />
-                    <span>{opt}</span>
-                  </label>
-                );
-              })}
-            </div>
-            {(() => {
-              const inferredMulti = /(chọn\s*\d+|chọn nhiều|chọn tat ca|chọn tất cả)/i.test(q.question);
-              const isMultiple = q.isMultiple ?? inferredMulti;
-              return isMultiple ? (
-                <div className={styles.meta} style={{ marginTop: 8, fontStyle: 'italic' }}>
-                  Có thể chọn nhiều đáp án
-                </div>
-              ) : null;
-            })()}
-          </div>
-        ))}
 
-        <div className={styles.actions}>
-          <button className={`${styles.button} ${styles.primary}`} onClick={handleSubmit}>Nộp bài</button>
+        <div className="bg-white rounded-xl shadow p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Danh sách đề thi</h2>
+          </div>
+
+          {loadingExams ? (
+            <div className="animate-pulse">
+              <div className="h-4 bg-gray-200 rounded w-40 mb-3" />
+              <div className="h-16 bg-gray-200 rounded w-full" />
+            </div>
+          ) : exams.length === 0 ? (
+            <div className="text-gray-600">Chưa có đề thi.</div>
+          ) : (
+            <div className="space-y-3">
+              {exams.slice(0, visibleCount).map((e) => (
+                <div key={e._id}
+                className="border border-[#ff9500] rounded-lg p-4 flex items-center justify-between transition duration-200 hover:shadow-md hover:bg-orange-50">
+                  <div>
+                    <div className="text-sm text-gray-500">Môn/Khóa học: <span className="font-medium">{e.courseId}</span></div>
+                    <div className="font-medium">{e.title || 'Đề thi trắc nghiệm'}</div>
+                  </div>
+                  <Button
+                    onClick={() => router.push(`/${locale}/exam/${encodeURIComponent(e._id)}`)}
+                    className=' h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
+                  >
+                    Thi thử
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {exams.length > 6 && (
+            <div className="mt-4 flex justify-center">
+              <Button
+                onClick={() => setVisibleCount(c => (c >= exams.length ? 6 : exams.length))}
+               className='w-[200px] h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors'
+              >
+                {visibleCount >= exams.length ? 'Thu gọn' : 'Xem thêm'}
+              </Button>
+            </div>
+          )}
         </div>
 
-        {result && (
-          <div className={styles.result}>
-            <div className={styles.scoreLine}>
-              Kết quả: {result.percentage}% ({result.score}/{result.total} đúng)
-            </div>
-            {result.results.map((r: ExamResultItem, i: number) => (
-              <div key={i} className={styles.resultItem}>
-                <div style={{ fontWeight: 600 }}>{i + 1}. {r.question}</div>
-                <div>
-                  Bạn chọn: {' '}
-                  <span className={r.isCorrect ? styles.correct : styles.incorrect}>
-                    {Array.isArray(r.userAnswer) ? r.userAnswer.join(', ') : r.userAnswer}
-                  </span>
-                  {' '}· Đáp án đúng: <strong>{Array.isArray(r.correctAnswer) ? r.correctAnswer.join(', ') : r.correctAnswer}</strong>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-lg font-semibold mb-4">Khóa học liên quan</h2>
+          <CourseListCard courses={relatedCourses.slice(0, 5)} loading={false} showFilters={false} />
+        </div>
       </div>
     </div>
-  );
+  )
 }
