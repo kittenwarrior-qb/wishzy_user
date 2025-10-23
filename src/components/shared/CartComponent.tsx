@@ -27,19 +27,20 @@ const CartComponent: React.FC = () => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <Button
-        variant='ghost'
-        size='icon'
-        className='w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors relative'
-        // Removed onClick toggle
-      >
-        <ShoppingCart className='w-5 h-5 text-[#cccccc]' />
-        {cartItemCount > 0 && (
-          <span className='absolute -top-1 -right-1 bg-[#ffa500] text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'>
-            {cartItemCount > 99 ? '99+' : cartItemCount}
-          </span>
-        )}
-      </Button>
+      <Link href='/cart'>
+        <Button
+          variant='ghost'
+          size='icon'
+          className='w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors relative'
+        >
+          <ShoppingCart className='w-5 h-5 text-[#cccccc]' />
+          {cartItemCount > 0 && (
+            <span className='absolute -top-1 -right-1 bg-[#ffa500] text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'>
+              {cartItemCount > 99 ? '99+' : cartItemCount}
+            </span>
+          )}
+        </Button>
+      </Link>
 
       {isOpen && cartItems.length > 0 && (
         // Removed mt-2 for a seamless transition

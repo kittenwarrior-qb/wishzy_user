@@ -32,7 +32,7 @@ const features = [
 
 export default function Banner() {
   return (
-    <section className="flex h-auto items-center justify-center gap-[51px] px-[35px] py-8 bg-[#fff5ed]">
+    <section className="flex h-auto items-center justify-center gap-[51px] px-[35px] py-8 ">
       <div className="flex items-center gap-[25px] w-full max-w-[2400px] ">
         <div className="flex-1 h-[285px] rounded-[20px] relative overflow-hidden bg-black">
           {bannerData.image && (

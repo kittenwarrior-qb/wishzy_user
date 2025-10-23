@@ -11,7 +11,6 @@ import React from "react";
 import { User } from "@/types/schema/user.schema";
 
 const instructorsData: User[] = [
-    // ... dữ liệu giảng viên của bạn không thay đổi
   { 
     _id: "1", 
     email: "instructor1@wishzy.com", 

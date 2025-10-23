@@ -1,6 +1,13 @@
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,61 +37,68 @@ const ListCard = () => {
 
   if (loading) {
     return (
-      <div className="w-full bg-[#FFF5ED] px-[35px] py-[30px]">
-        <div className="w-full max-w-[2400px] mx-auto">
-          <div className="flex justify-center items-center py-16">
-            <span className="text-lg">Đang tải...</span>
-          </div>
+      <div className="py-10 max-w-[2400px] mx-auto">
+        <div className="mb-6 px-[35px]">
+          <p className="font-semibold text-[22px] mb-2">Khóa học theo lớp</p>
+          <p className="text-[18px]">Khám phá các khóa học theo từng lớp</p>
+        </div>
+        <div className="flex justify-center items-center py-16">
+          <span className="text-lg">Đang tải...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-[#FFF5ED] px-[35px] py-[30px]">
-      <div className="w-full max-w-[2400px] mx-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-6 md:gap-8 pt-8 pb-16">
-          {grades.map((grade, index) => {
-            return (
-              <Link
-                key={grade._id}
-                href={`/search?grade=${encodeURIComponent(grade.gradeName)}`}
-                className="block"
-              >
-                <Card
-                  className={`
-                    flex flex-col bg-white rounded-[16px] border border-solid border-black overflow-hidden 
-                    transition-transform duration-300 group cursor-pointer
-                    ${index % 2 === 0 ? '-translate-y-[25px]' : 'translate-y-[25px]'}
-                    lg:hover:scale-105
-                    ${index % 4 < 2 ? 'lg:hover:-translate-x-2' : 'lg:hover:translate-x-2'}
-                    ${index % 6 < 3 ? '2xl:hover:-translate-x-2' : '2xl:hover:translate-x-2'}
-                  `}
-                >
-                  <CardContent className="flex flex-col flex-1 pt-[24px] px-[16px] pb-[16px]">
-                    <div className="">
-                      <h2 className="font-semibold text-black text-xl md:text-2xl tracking-tight leading-tight ">
-                        {grade.gradeName}
-                      </h2>
-                      <p className="font-normal text-[#191919] text-sm md:text-base mt-1">
-                        10k+ học viên
-                      </p>
-                    </div>
+    <div className="py-10 max-w-[2400px] mx-auto">
+      <div className="mb-6 px-[35px]">
+        <p className="font-semibold text-[22px] mb-2">Khóa học theo lớp</p>
+        <p className="text-[18px]">Khám phá các khóa học theo từng lớp</p>
+      </div>
 
-                    <div className="mt-auto aspect-square bg-[#dddddd] relative overflow-hidden rounded-[16px]">
-                      <Image 
-                        src="/logo/bg_logo_black.png" 
-                        alt={grade.gradeName} 
-                        fill
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
+      <div className="px-[35px] relative">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: false,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-3.5">
+            {grades.map((grade) => (
+              <CarouselItem key={grade._id} className="pl-3.5 basis-auto">
+                <Link
+                  href={`/search?grade=${encodeURIComponent(grade.gradeName)}`}
+                  className="block"
+                >
+                  <Card className="w-[220px] flex-shrink-0 flex flex-col items-start border-0 shadow-none bg-transparent">
+                    <CardContent className="p-0 w-full">
+                      <div className="h-[220px] w-full relative mb-3 overflow-hidden bg-white border border-solid border-black">
+                        <Image
+                          src="/logo/bg_logo_black.png"
+                          alt={grade.gradeName}
+                          fill
+                          sizes="220px"
+                          className="object-cover"
+                        />
+                      </div>
+
+                      <div>
+                        <h3 className="font-semibold text-black text-lg mb-1">
+                          {grade.gradeName}
+                        </h3>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          
+          <CarouselPrevious className="absolute top-1/2 -translate-y-1/2 left-[-10px] z-10" />
+          <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-[-10px] z-10" />
+          
+        </Carousel>
       </div>
     </div>
   );

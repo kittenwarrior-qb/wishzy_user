@@ -14,7 +14,7 @@ import TutorialSection from "@/components/pages/home-page/tutorial-section";
 
 export default function HomePageClient() {
   return (
-        <div className="bg-[#FFF5ED]">
+        <div>
         <AdSection/>
         <BannerSection/>
         <CategorySection/>

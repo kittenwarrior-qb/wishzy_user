@@ -30,9 +30,11 @@ const AuthComponent: React.FC = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <Button variant="ghost" size="icon" className="w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors">
-                <User className="w-5 h-5 text-[#cccccc]" />
-            </Button>
+            <Link href="/profile">
+                <Button variant="ghost" size="icon" className="w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors">
+                    <User className="w-5 h-5 text-[#cccccc]" />
+                </Button>
+            </Link>
 
             {isHovered && (
                 // Removed mt-2 to eliminate the gap and match CartComponent
