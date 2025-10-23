@@ -420,7 +420,7 @@ export default function OrderPageClient () {
                 <div
                   className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                     paymentMethod === 'vnpay'
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-[#ff9500] bg-orange-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => setPaymentMethod('vnpay')}
@@ -432,13 +432,13 @@ export default function OrderPageClient () {
                       value='vnpay'
                       checked={paymentMethod === 'vnpay'}
                       onChange={() => setPaymentMethod('vnpay')}
-                      className='text-blue-600'
+                      className='text-[#ff9500] accent-[#ff9500]'
                     />
                     <div className='w-5 h-5 bg-blue-600 rounded flex items-center justify-center'>
                       <span className='text-white text-xs font-bold'>V</span>
                     </div>
                     <div>
-                      <div className='font-medium'>Thanh toán VNPay</div>
+                      <div className='font-medium \'>Thanh toán VNPay</div>
                       <div className='text-sm text-gray-500'>
                         Thanh toán trực tuyến qua VNPay
                       </div>
