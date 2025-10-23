@@ -196,7 +196,7 @@ const CourseCard = ({ course }: { course: CourseList }) => {
               <div className="flex items-center gap-2 pt-2">
                 <Avatar className="h-8 w-8">
                   {createdBy.avatar ? (
-                    <Image
+                    <img
                       src={createdBy.avatar}
                       alt={createdBy.fullName || "Instructor"}
                       width={32}

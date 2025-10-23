@@ -11,7 +11,7 @@ export default function VNPayReturnPage () {
   const router = useRouter()
   const pathname = usePathname()
   const locale = useMemo(() => pathname?.split('/')?.[1] || 'vi', [pathname])
-  const clearCart = useCartStore(s => s.clearCart)
+  const replaceCart = useCartStore(s => s.replaceCart)
   const clearedRef = useRef(false)
 
   const [result, setResult] = useState<VNPayVerifyResult | null>(null)
@@ -45,8 +45,11 @@ export default function VNPayReturnPage () {
               'owned_courses',
               JSON.stringify(Array.from(ownedSet))
             )
+            // Keep only items not purchased in the cart
+            const current = useCartStore.getState().items || []
+            const remaining = current.filter(it => !newIds.includes(it._id))
+            replaceCart(remaining)
           } catch {}
-          clearCart()
           clearedRef.current = true
         }
         setResult(verify)
