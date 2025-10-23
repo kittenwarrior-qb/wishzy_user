@@ -137,10 +137,18 @@ export default function OrderPageClient () {
     const fetchProfile = async () => {
       try {
         setLoading(true)
-        const token = localStorage.getItem('auth-storage')
-        if (!token) {
-          toast.error('Bạn chưa đăng nhập, vui lòng đăng nhập lại')
-          router.push('/login')
+        // Read persisted token properly from auth-storage
+        let persistedToken: string | null = null
+        try {
+          const raw = localStorage.getItem('auth-storage')
+          if (raw) {
+            const parsed = JSON.parse(raw)
+            persistedToken = parsed?.state?.token ?? null
+          }
+        } catch {}
+
+        // If no token yet, let the auth-guard handle redirect with proper redirect param
+        if (!persistedToken && !token) {
           return
         }
 
@@ -148,17 +156,24 @@ export default function OrderPageClient () {
         if (res.user) setUserInfo(res.user)
         else {
           toast.error('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại')
-          router.push('/login')
+          router.replace(`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/order`)}`)
         }
       } catch (error: unknown) {
-        toast.error('Không thể tải thông tin, vui lòng đăng nhập lại')
-        router.push('/login')
+        // Avoid redirect loop; only show error if we don't have any user info to display
+        const hasAnyInfo = Boolean(
+          (user && (user.fullName || user.email)) ||
+          userInfo.fullName ||
+          userInfo.email
+        )
+        if (!hasAnyInfo) {
+          toast.error('Không thể tải thông tin người dùng')
+        }
       } finally {
         setLoading(false)
       }
     }
     fetchProfile()
-  }, [router])
+  }, [router, locale, token])
 
   // Hydrate danh sách checkout từ localStorage (ưu tiên checkout_items), fallback sang items trong store
   useEffect(() => {
@@ -420,7 +435,7 @@ export default function OrderPageClient () {
                 <div
                   className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                     paymentMethod === 'vnpay'
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-[#ff9500] bg-orange-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => setPaymentMethod('vnpay')}
@@ -432,13 +447,13 @@ export default function OrderPageClient () {
                       value='vnpay'
                       checked={paymentMethod === 'vnpay'}
                       onChange={() => setPaymentMethod('vnpay')}
-                      className='text-blue-600'
+                      className='text-[#ff9500] accent-[#ff9500]'
                     />
                     <div className='w-5 h-5 bg-blue-600 rounded flex items-center justify-center'>
                       <span className='text-white text-xs font-bold'>V</span>
                     </div>
                     <div>
-                      <div className='font-medium'>Thanh toán VNPay</div>
+                      <div className='font-medium \'>Thanh toán VNPay</div>
                       <div className='text-sm text-gray-500'>
                         Thanh toán trực tuyến qua VNPay
                       </div>
