@@ -19,8 +19,9 @@ export const useScrollPosition = (
 
     if (elementRef?.current) {
       // Nếu có elementRef, lắng nghe scroll của element đó
-      elementRef.current.addEventListener('scroll', handleScroll);
-      return () => elementRef.current?.removeEventListener('scroll', handleScroll);
+      const element = elementRef.current;
+      element.addEventListener('scroll', handleScroll);
+      return () => element.removeEventListener('scroll', handleScroll);
     } else {
       // Nếu không có elementRef, lắng nghe scroll của window
       window.addEventListener('scroll', handleScroll);

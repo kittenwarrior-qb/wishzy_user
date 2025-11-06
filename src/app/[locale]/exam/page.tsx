@@ -46,13 +46,13 @@ export default function ExamPage() {
   const [loadingByCourse, setLoadingByCourse] = useState<boolean>(false);
   const [exam, setExam] = useState<{ examId: string; title?: string; questionsCount: number } | null>(null);
   const [relatedCourses, setRelatedCourses] = useState<CourseList[]>([]);
-  const [exams, setExams] = useState<Array<{ _id: string; courseId: string; title: string; questions?: any[] }>>([])
+  const [exams, setExams] = useState<Array<{ _id: string; courseId: string; title: string; questions?: unknown[] }>>([])
   const [loadingExams, setLoadingExams] = useState<boolean>(false)
   const [visibleCount, setVisibleCount] = useState<number>(6)
 
   useEffect(() => {
     CourseService.getHotCourse()
-      .then(res => setRelatedCourses((res as any).courses || []))
+      .then(res => setRelatedCourses(res.courses || []))
       .catch(() => {})
   }, [])
 
@@ -63,9 +63,11 @@ export default function ExamPage() {
         if (!res.ok) throw new Error(await res.text())
         return res.json()
       })
-      .then((data) => {
+      .then((data: unknown) => {
         if (Array.isArray(data)) setExams(data)
-        else if (Array.isArray((data as any).exams)) setExams((data as any).exams)
+        else if (data && typeof data === 'object' && 'exams' in data && Array.isArray((data as { exams: unknown[] }).exams)) {
+          setExams((data as { exams: Array<{ _id: string; courseId: string; title: string; questions?: unknown[] }> }).exams)
+        }
         else setExams([])
       })
       .catch(() => setExams([]))

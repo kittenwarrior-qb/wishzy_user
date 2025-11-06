@@ -7,7 +7,7 @@ interface PageSEOProps {
   description?: string
   images?: string[]
   keywords?: string[]
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export async function genPageMetadata(

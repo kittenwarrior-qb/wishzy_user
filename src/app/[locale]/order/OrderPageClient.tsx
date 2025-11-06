@@ -87,7 +87,7 @@ export default function OrderPageClient () {
   const computeTotals = (arr: CartItem[]) => {
     const st = arr.reduce((s, it) => s + it.price * (it.quantity ?? 1), 0)
     const dis = arr.reduce((s, it) => {
-      const original = (it as any).originalPrice ?? it.price
+      const original = ('originalPrice' in it && typeof it.originalPrice === 'number') ? it.originalPrice : it.price
       return s + Math.max(0, (original - it.price)) * (it.quantity ?? 1)
     }, 0)
     return {

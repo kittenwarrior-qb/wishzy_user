@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { msgSchema} from "./base.schema";
 
 export const courseRefSchema = z.object({
   _id: z.string(),

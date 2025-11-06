@@ -51,7 +51,7 @@ export const CourseService = {
       const query = new URLSearchParams();
       
       Object.entries(params ?? {})
-        .filter(([_, v]) => v !== undefined && v !== null && v !== "")
+        .filter(([, v]) => v !== undefined && v !== null && v !== "")
         .forEach(([k, v]) => {
           if (k === 'subjects' && Array.isArray(v)) {
             v.forEach(subject => query.append('subjects', subject));

@@ -18,7 +18,7 @@ type AuthStore = {
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       token: null,
       user: null,
       setAuth: (token: string | null, user: User) => {

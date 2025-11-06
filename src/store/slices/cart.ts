@@ -154,7 +154,9 @@ export const useCartStore = create<CartStore>()(
         return items.some(item => item._id === _id);
       },
 
-      hasOwned: (_id) => {
+      hasOwned: (_id: string) => {
+        // TODO: Implement owned check logic - parameter intentionally unused for now
+        void _id; // Suppress unused parameter warning
         return false;
       },
 
