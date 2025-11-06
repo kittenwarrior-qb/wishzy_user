@@ -7,6 +7,7 @@ import { CourseService } from "@/services/course.service";
 import { CourseList } from "@/types/schema/course.schema";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const HotListSection = () => {
   const [courses, setCourses] = useState<CourseList[]>([]);
@@ -82,7 +83,9 @@ const HotListSection = () => {
             {showMoreLabel}
           </Button>
           <Button variant="outline" className="text-[14px]">
+          <Link href="/search">
             {t("HotListSection.viewAll") || "Xem tất cả"}
+            </Link>
           </Button>
         </div>
       )}

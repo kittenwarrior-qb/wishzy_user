@@ -17,8 +17,8 @@ const AuthComponent: React.FC = () => {
     if (!token || !user) {
         return (
             <Link href="/login">
-                <Button variant="ghost" size="icon" className="w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors">
-                    <User className="w-5 h-5 text-[#cccccc]" />
+                <Button variant="ghost" size="icon" className="w-9 h-9 p-0 rounded-full hover:bg-[#ccc] transition-colors">
+                    <User className="w-5 h-5 text-[#000]" />
                 </Button>
             </Link>
         );
@@ -31,8 +31,8 @@ const AuthComponent: React.FC = () => {
             onMouseLeave={() => setIsHovered(false)}
         >
             <Link href="/profile">
-                <Button variant="ghost" size="icon" className="w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors">
-                    <User className="w-5 h-5 text-[#cccccc]" />
+                <Button variant="ghost" size="icon" className="w-9 h-9 p-0 rounded-full hover:bg-[#ccc] transition-colors">
+                    <User className="w-5 h-5 text-[#000]" />
                 </Button>
             </Link>
 

@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Smartphone, Monitor } from "lucide-react";
+import Link from "next/link";
 
 const changePasswordSchema = z
   .object({
@@ -160,6 +161,7 @@ export default function ProfileSecurity() {
           </div>
           <Button variant="outline" className="mt-3 w-full py-2 flex items-center gap-1">
             Xem tất cả
+       
           </Button>
         </div>
 

@@ -50,7 +50,7 @@ export default function AddToCartButton({
       onClick={handleAddToCart}
       disabled={inCart || isOwned}
       variant={'outline'}
-      className={`h-10 p-[11px] bg-[#ffa500] hover:bg-[#ff9500] rounded-[5px] font-medium text-black text-base leading-6 transition-colors ${className}`}
+      className={`h-10 p-[11px] bg-[#FFF5ED]  rounded-[5px] font-medium text-black text-base leading-6 transition-colors ${className}`}
     >
       <ShoppingCart className="h-4 w-4" />
       {isOwned ? 'Đã sở hữu' : (inCart ? inCartLabel : label)}

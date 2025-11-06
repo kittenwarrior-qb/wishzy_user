@@ -148,12 +148,12 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   }`;
 
   return (
-    <div className={`relative w-full ${className}`}>
+    <div className={`relative w-full ${className} `}>
       <div
-        className={`flex items-center justify-between py-0 bg-[#383838] rounded-[50px] border-2 transition-colors ${
+        className={`flex items-center justify-between py-0 bg-[#fff] border border-[#ccc] rounded-[50px] transition-colors ${
           isSearchActive
-            ? "border-white"
-            : "border-transparent hover:border-zinc-600"
+            ? "border-[#939393]"
+            : " hover:border-[#939393]"
         } ${variant === "sticky" ? stickyClasses : normalClasses}`}
       >
         <div className="flex items-center gap-[33px] flex-1 min-w-0">
@@ -161,12 +161,12 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
             variant="ghost"
             className="h-auto gap-[9px] px-0 hover:bg-transparent hidden sm:inline-flex"
           >
-            <span className="font-normal text-[#ffffff] text-sm">Tất cả</span>
-            <ChevronDown className="w-2.5 h-2.5 text-[#ffffff]" />
+            <span className="font-normal text-[#000] text-sm">Tất cả</span>
+            <ChevronDown className="w-2.5 h-2.5 text-[#000]" />
           </Button>
           <div className="w-px h-6 bg-zinc-600 hidden sm:block" />
           <div className="flex items-center gap-4 flex-1 min-w-0">
-            <Search className="w-4 h-4 text-[#ffffff] flex-shrink-0" />
+            <Search className="w-4 h-4 text-[#000] flex-shrink-0" />
             <input
               type="text"
               placeholder="Tìm kiếm khóa học, tài liệu,..."

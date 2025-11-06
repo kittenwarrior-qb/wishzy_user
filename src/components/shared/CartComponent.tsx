@@ -8,7 +8,6 @@ import { useCartStore, type CartItem } from '@/store/slices/cart'
 import Image from 'next/image'
 
 const CartComponent: React.FC = () => {
-  // State to manage hover visibility
   const [isOpen, setIsOpen] = useState(false)
   const { getItemCount, items, removeItem, total } = useCartStore()
 
@@ -21,7 +20,6 @@ const CartComponent: React.FC = () => {
   }
 
   return (
-    // Use onMouseEnter/onMouseLeave on the parent div
     <div
       className='relative'
       onMouseEnter={() => setIsOpen(true)}
@@ -31,9 +29,9 @@ const CartComponent: React.FC = () => {
         <Button
           variant='ghost'
           size='icon'
-          className='w-9 h-9 p-0 rounded-full hover:bg-[#333] transition-colors relative'
+          className='w-9 h-9 p-0 rounded-full hover:bg-[#ccc] transition-colors relative'
         >
-          <ShoppingCart className='w-5 h-5 text-[#cccccc]' />
+          <ShoppingCart className='w-5 h-5 text-[#000]' />
           {cartItemCount > 0 && (
             <span className='absolute -top-1 -right-1 bg-[#ffa500] text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'>
               {cartItemCount > 99 ? '99+' : cartItemCount}
@@ -43,7 +41,6 @@ const CartComponent: React.FC = () => {
       </Link>
 
       {isOpen && cartItems.length > 0 && (
-        // Removed mt-2 for a seamless transition
         <div className='absolute right-0 top-full w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50'>
           <div className='p-4'>
             <h3 className='text-lg font-semibold text-gray-900 mb-3'>
@@ -71,7 +68,7 @@ const CartComponent: React.FC = () => {
                       {item.grade.gradeName} - {item.subject.subjectName}
                     </p>
                     <p className='text-sm text-gray-500'>
-                      {item.quantity} x {item.price.toLocaleString('vi-VN')}đ
+                      {item.price.toLocaleString('vi-VN')}đ
                     </p>
                   </div>
                   <Button

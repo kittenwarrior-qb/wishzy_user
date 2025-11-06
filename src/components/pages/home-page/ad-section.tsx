@@ -3,9 +3,9 @@ import React from "react";
 
 export default function AdSection(){
   return (
-    <section className="flex items-center justify-center gap-2.5 p-2.5 bg-[#ffa500]">
+    <section className="flex items-center justify-center gap-2.5 p-2.5 bg-[#FFF5ED]">
       <div className="flex w-full items-end max-w-[450px] justify-between">
-        <h2 className="font-extrabold text-black text-2xl tracking-[0] leading-9 whitespace-nowrap">
+        <h2 className="font-extrabold text-medium text-2xl tracking-[0] leading-9 whitespace-nowrap">
           ƯU ĐÃI TẶNG BẠN MỚI
         </h2>
 

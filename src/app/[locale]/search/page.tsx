@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import CourseListCard from "@/components/shared/course-list-card";
 import { CourseService, GetCourseListParams } from "@/services/course.service";
@@ -25,6 +25,9 @@ import { X, Filter } from "lucide-react";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = (pathname?.split('/')?.[1] || 'vi');
   const [courses, setCourses] = useState<CourseList[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,9 @@ const SearchPage = () => {
   const [showFilters, setShowFilters] = useState(true);
   const [grades, setGrades] = useState<Grade[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(false);
+  const [loadingAllSubjects, setLoadingAllSubjects] = useState(false);
 
   const [courseName, setCourseName] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -74,45 +79,76 @@ const SearchPage = () => {
     const params: GetCourseListParams = {
       page: currentPage,
       limit: 12,
-      sortBy,
     };
 
-    if (courseName.trim()) {
+    // Add sortBy parameter
+    if (sortBy) {
+      params.sortBy = sortBy;
+    }
+
+    // Add courseName filter
+    if (courseName && courseName.trim()) {
       params.courseName = courseName.trim();
     }
 
+    // Process price ranges - merge multiple ranges into min/max
     if (selectedPriceRanges.length > 0) {
-      let minPrice = Infinity;
-      let maxPrice = 0;
+      let minPrice: number | undefined;
+      let maxPrice: number | undefined;
+      let hasFree = false;
       
       selectedPriceRanges.forEach(priceRange => {
         if (priceRange === 'free') {
-          maxPrice = Math.max(maxPrice, 0);
+          hasFree = true;
         } else if (priceRange.includes('-')) {
-          const [min, max] = priceRange.split('-').map(p => parseInt(p.replace('.', '')));
-          minPrice = Math.min(minPrice, min * 1000);
-          maxPrice = Math.max(maxPrice, max * 1000);
+          const [minStr, maxStr] = priceRange.split('-');
+          // Parse and convert to VND (thousands)
+          // e.g., "0-99" means 0 to 99,000 VND, "100-199" means 100,000 to 199,000 VND
+          const min = parseInt(minStr.replace(/\./g, ''), 10) * 1000;
+          const max = parseInt(maxStr.replace(/\./g, ''), 10) * 1000;
+          
+          if (!isNaN(min) && !isNaN(max)) {
+            minPrice = minPrice === undefined ? min : Math.min(minPrice, min);
+            maxPrice = maxPrice === undefined ? max : Math.max(maxPrice || 0, max);
+          }
         }
       });
       
-      if (minPrice !== Infinity) {
-        params.minPrice = minPrice;
-      }
-      if (maxPrice > 0) {
-        params.maxPrice = maxPrice;
+      // If free is selected alone, set price to 0
+      // If free is selected with other ranges, include free in the range (start from 0)
+      if (hasFree) {
+        if (minPrice === undefined) {
+          // Only free selected
+          params.minPrice = 0;
+          params.maxPrice = 0;
+        } else {
+          // Free + other ranges: expand range to include 0
+          params.minPrice = 0;
+          if (maxPrice !== undefined) {
+            params.maxPrice = maxPrice;
+          }
+        }
+      } else {
+        // Only set price params if we have valid ranges
+        if (minPrice !== undefined) {
+          params.minPrice = minPrice;
+        }
+        if (maxPrice !== undefined && maxPrice > 0) {
+          params.maxPrice = maxPrice;
+        }
       }
     }
 
+    // Add subjects filter (array will be properly handled by service)
     if (selectedSubjects.length > 0) {
       params.subjects = selectedSubjects;
-      console.log('🔍 Selected subjects for API:', selectedSubjects);
     }
 
-    if (gradeParam) {
-      params.grade = gradeParam;
+    // Add grade filter
+    if (gradeParam && gradeParam.trim()) {
+      params.grade = gradeParam.trim();
     }
 
-    console.log('🚀 API Parameters:', params);
     return params;
   }, [currentPage, courseName, selectedPriceRanges, sortBy, selectedSubjects, gradeParam]);
 
@@ -121,6 +157,7 @@ const SearchPage = () => {
   }, []);
 
   const applyFilters = useCallback(() => {
+    // Check if in grade mode and no subjects available
     if (searchMode === 'grade' && !loadingSubjects && subjects.length === 0) {
       setCourses([]);
       setLoading(false);
@@ -135,25 +172,63 @@ const SearchPage = () => {
     fetchCourses({ ...params, page: 1 });
   }, [buildQueryParams, fetchCourses, searchMode, loadingSubjects, subjects.length]);
 
-  // Auto-apply filters when they change
+  // Initial fetch when component mounts or when grade/subjects are ready
   useEffect(() => {
-    const timer = setTimeout(() => {
-      applyFilters();
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [courseName, selectedSubjects, selectedPriceRanges, sortBy, applyFilters]);
-
-  // Apply filters when page changes
-  useEffect(() => {
-    if (currentPage > 1) {
-      // Don't fetch if in grade mode and no subjects
-      if (searchMode === 'grade' && subjects.length === 0) {
+    // Skip initial fetch if in grade mode and subjects are still loading or empty
+    if (searchMode === 'grade') {
+      if (loadingSubjects) {
+        return; // Wait for subjects to load
+      }
+      if (subjects.length === 0) {
+        // No subjects available, set empty state
+        setCourses([]);
+        setLoading(false);
+        setTotalItems(0);
+        setTotalPages(1);
+        setCurrentPage(1);
         return;
       }
-      const params = buildQueryParams();
-      fetchCourses(params);
     }
-  }, [currentPage, buildQueryParams, fetchCourses, searchMode, subjects.length]);
+
+    // Initial fetch with current params
+    const params = buildQueryParams();
+    fetchCourses({ ...params, page: 1 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchMode, loadingSubjects, subjects.length, grades.length]);
+
+  // Auto-apply filters when they change (with debounce for courseName)
+  useEffect(() => {
+    // Skip if initial load hasn't happened yet
+    if (searchMode === 'grade' && (loadingSubjects || subjects.length === 0)) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const params = buildQueryParams();
+      fetchCourses({ ...params, page: 1 });
+      setCurrentPage(1);
+    }, courseName ? 500 : 0); // Debounce only for courseName changes
+    
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseName, selectedSubjects, selectedPriceRanges, sortBy, searchMode, loadingSubjects, subjects.length]);
+
+  // Apply filters when page changes (without resetting page)
+  useEffect(() => {
+    // Skip if this is initial load
+    if (currentPage === 1) {
+      return;
+    }
+
+    // Don't fetch if in grade mode and no subjects
+    if (searchMode === 'grade' && subjects.length === 0) {
+      return;
+    }
+
+    const params = buildQueryParams();
+    fetchCourses(params);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, searchMode, subjects.length]);
 
   // Initialize with search term from URL
   useEffect(() => {
@@ -177,6 +252,32 @@ const SearchPage = () => {
     
     fetchGrades();
   }, []);
+
+  useEffect(() => {
+    const fetchAllSubjects = async () => {
+      if (!gradeParam && grades.length > 0) {
+        setLoadingAllSubjects(true);
+        try {
+          const response = await SubjectService.getSubjects({
+            limit: 100,
+            status: true
+          });
+          
+          if (response.subjects) {
+            setAllSubjects(response.subjects);
+          }
+        } catch (error) {
+          console.error('Failed to fetch all subjects:', error);
+        } finally {
+          setLoadingAllSubjects(false);
+        }
+      } else {
+        setAllSubjects([]);
+      }
+    };
+
+    fetchAllSubjects();
+  }, [gradeParam, grades.length]);
 
   // Fetch subjects based on selected grade
   useEffect(() => {
@@ -252,26 +353,33 @@ const SearchPage = () => {
     setCurrentPage(1);
   };
 
-  const handleSubjectChange = (subjectId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedSubjects(prev => {
-        const newSubjects = [...prev, subjectId];
-        console.log('✅ Added subject. New selectedSubjects:', newSubjects);
-        return newSubjects;
-      });
-    } else {
-      setSelectedSubjects(prev => {
-        const newSubjects = prev.filter(id => id !== subjectId);
-        return newSubjects;
-      });
-    }
-  };
 
   const handlePriceRangeChange = (rangeId: string, checked: boolean) => {
     if (checked) {
       setSelectedPriceRanges(prev => [...prev, rangeId]); // Allow multiple price ranges
     } else {
       setSelectedPriceRanges(prev => prev.filter(id => id !== rangeId));
+    }
+  };
+
+  const handleGradeFilter = (gradeNameOrId: string) => {
+    // Update URL with grade filter using Next.js router
+    const params = new URLSearchParams();
+    if (courseName) {
+      params.set('q', courseName);
+    }
+    if (gradeNameOrId) {
+      params.set('grade', gradeNameOrId);
+    }
+    router.push(`/${locale}/search?${params.toString()}`);
+  };
+
+  const handleSubjectButtonClick = (subjectId: string) => {
+    // Toggle subject in selectedSubjects
+    if (selectedSubjects.includes(subjectId)) {
+      setSelectedSubjects(prev => prev.filter(id => id !== subjectId));
+    } else {
+      setSelectedSubjects(prev => [...prev, subjectId]);
     }
   };
 
@@ -310,11 +418,11 @@ const SearchPage = () => {
           <div className="mb-6 px-[35px]">
             <div className="flex flex-wrap gap-2">
               <Link
-                href={`/search${courseName ? `?q=${courseName}` : ''}`}
+                href={`/${locale}/search${courseName ? `?q=${encodeURIComponent(courseName)}` : ''}`}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   !gradeParam
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
+                    ? 'bg-[#FFF5ED] text-black '
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 '
                 }`}
               >
                 Tất cả lớp
@@ -324,11 +432,11 @@ const SearchPage = () => {
                 return (
                   <Link
                     key={grade._id}
-                    href={`/search?grade=${grade.gradeName}${courseName ? `&q=${courseName}` : ''}`}
+                    href={`/${locale}/search?grade=${encodeURIComponent(grade.gradeName)}${courseName ? `&q=${encodeURIComponent(courseName)}` : ''}`}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-orange-500 text-white shadow-md'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
+                        ? 'bg-[#FFF5ED] text-black '
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 '
                     }`}
                   >
                     {grade.gradeName}
@@ -377,37 +485,92 @@ const SearchPage = () => {
                 </span>
               </div>
 
+              {/* Grade Filter Buttons */}
+              {!gradeParam && grades.length > 0 && (
+                <div className="flex flex-col gap-4">
+                  <h3 className="font-medium text-black text-sm">
+                    Lớp học
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {grades.map((grade) => (
+                      <button
+                        key={grade._id}
+                        onClick={() => handleGradeFilter(grade.gradeName)}
+                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                          gradeParam === grade.gradeName || gradeParam === grade._id
+                            ? 'bg-[#FFF5ED] text-black border border-orange-300'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent'
+                        }`}
+                      >
+                        {grade.gradeName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Subject Filter */}
               <div className="flex flex-col gap-4">
                 <h3 className="font-medium text-black text-sm">
                   Môn học {searchMode === 'grade' && `(${gradeParam})`}
                 </h3>
 
-                {loadingSubjects ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <div className="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
-                    Đang tải môn học...
-                  </div>
-                ) : displaySubjects.length > 0 ? (
-                  displaySubjects.map((subject) => (
-                    <div key={subject.id} className="flex items-center gap-2">
-                      <Checkbox
-                        id={subject.id}
-                        checked={selectedSubjects.includes(subject.id)}
-                        onCheckedChange={(checked) => handleSubjectChange(subject.id, checked as boolean)}
-                        className="w-4 h-4"
-                      />
-                      <label
-                        htmlFor={subject.id}
-                        className="text-black text-sm cursor-pointer"
-                      >
-                        {subject.label}
-                      </label>
+                {searchMode === 'grade' ? (
+                  // Grade mode: show subjects with buttons
+                  loadingSubjects ? (
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <div className="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+                      Đang tải môn học...
                     </div>
-                  ))
+                  ) : displaySubjects.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {displaySubjects.map((subject) => (
+                        <button
+                          key={subject.id}
+                          onClick={() => handleSubjectButtonClick(subject.id)}
+                          className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                            selectedSubjects.includes(subject.id)
+                              ? 'bg-[#FFF5ED] text-black border border-orange-300'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent'
+                          }`}
+                        >
+                          {subject.label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      Không có môn học nào trong lớp này
+                    </p>
+                  )
                 ) : (
-                  <p className="text-sm text-gray-500">
-                    {searchMode === 'grade' ? 'Không có môn học nào trong lớp này' : 'Không có môn học nào'}
-                  </p>
+                  // All mode: show all subjects with buttons
+                  loadingAllSubjects ? (
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <div className="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+                      Đang tải môn học...
+                    </div>
+                  ) : allSubjects.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {allSubjects.map((subject) => (
+                        <button
+                          key={subject._id}
+                          onClick={() => handleSubjectButtonClick(subject._id)}
+                          className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                            selectedSubjects.includes(subject._id)
+                              ? 'bg-[#FFF5ED] text-black border border-orange-300'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent'
+                          }`}
+                        >
+                          {subject.subjectName}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      Không có môn học nào
+                    </p>
+                  )
                 )}
               </div>
 

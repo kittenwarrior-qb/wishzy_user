@@ -34,7 +34,7 @@ export default function Banner() {
   return (
     <section className="flex h-auto items-center justify-center gap-[51px] px-[35px] py-8 ">
       <div className="flex items-center gap-[25px] w-full max-w-[2400px] ">
-        <div className="flex-1 h-[285px] rounded-[20px] relative overflow-hidden bg-black">
+        <div className="flex-1 h-[285px] rounded-[20px] relative overflow-hidden bg-[#FFF5ED]">
           {bannerData.image && (
             <Image
               src={bannerData.image}
@@ -45,7 +45,7 @@ export default function Banner() {
           )}
 
           <div className="absolute inset-0 flex top-10 left-10">
-            <div className=" text-white">
+            <div className=" text-[#171717]">
               <h1 className="text-4xl font-bold mb-2">NHẬN ƯU ĐÃI KHI MUA<br/> KHÓA HỌC</h1>
               <p className="text-xl mb-1">tới 2/2026</p>
               <p className="text-2xl font-semibold">Học ngay hôm nay nhé</p>
@@ -86,7 +86,7 @@ export default function Banner() {
               })}
             </ul>
 
-            <Button className="h-10 w-full bg-[#ffa500] hover:bg-[#ff9500] text-black rounded-[5px] [font-family:'Be_Vietnam_Pro-Medium',Helvetica] font-medium text-base leading-6">
+            <Button className="h-10 w-full bg-[#FFF5ED]  text-black rounded-[5px] [font-family:'Be_Vietnam_Pro-Medium',Helvetica] font-medium text-base leading-6">
               Khám phá khóa học
             </Button>
           </CardContent>
