@@ -8,9 +8,9 @@ interface PageParams {
 export async function generateMetadata({
   params,
 }: {
-  params: PageParams | Promise<PageParams>;
+  params: Promise<PageParams>;
 }) {
-  const resolvedParams = params instanceof Promise ? await params : params;
+  const resolvedParams = await params;
   const locale = resolvedParams.locale || "vi";
 
   return genPageMetadata(locale, "Cart", {

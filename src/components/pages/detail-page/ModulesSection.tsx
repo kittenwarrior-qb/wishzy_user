@@ -108,7 +108,7 @@ const ModulesSection = ({ services }: ModulesSectionProps) => {
         {expandedModule === module.id && (
           <div className="mt-4 text-gray-700">
             <ul className="list-none space-y-2">
-              {moduleDetails[module.id]?.map((lesson) => (
+              {moduleDetails[String(module.id) as keyof typeof moduleDetails]?.map((lesson) => (
                 <li key={lesson.id} className="flex items-center text-sm">
                   <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
                   <span className="flex-1">{lesson.title}</span>

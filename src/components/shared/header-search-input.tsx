@@ -48,7 +48,7 @@ export const SearchInput = () => {
     const filtered = courses.filter(
       (c) =>
         c.courseName.toLowerCase().includes(q.toLowerCase()) ||
-        c.createdBy.fullName.toLowerCase().includes(q.toLowerCase())
+        (c.createdBy?.fullName?.toLowerCase().includes(q.toLowerCase()) ?? false)
     );
     setResults(filtered);
   }, 300);
@@ -79,7 +79,9 @@ export const SearchInput = () => {
 
   const uniqueInstructors = Array.from(
     new Map(
-      results.map((c) => [c.createdBy.fullName, c])
+      results
+        .filter((c) => c.createdBy?.fullName)
+        .map((c) => [c.createdBy!.fullName, c])
     ).values()
   );
 
@@ -153,6 +155,7 @@ export const SearchInput = () => {
 
             if (item.type === "instructor") {
               const inst = item.value as CourseList;
+              if (!inst.createdBy) return null;
               return (
                 <li
                   key={`instructor-${inst.createdBy.email}`}

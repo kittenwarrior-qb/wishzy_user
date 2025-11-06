@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Star } from "lucide-react";
-import { Review } from "@/types/schema/course.schema";
+import { type Review } from "@/types/schema/course.schema";
 
 interface ReviewsSectionProps {
   reviews: Review[];

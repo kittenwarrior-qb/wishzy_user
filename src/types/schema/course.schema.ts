@@ -70,3 +70,19 @@ export type CourseDetailResponse = z.infer<typeof courseDetailResponseSchema>;
 export type CreatedBy = z.infer<typeof createdBySchema>;
 export type SubjectRef = z.infer<typeof subjectRefSchema>;
 export type GradeRef = z.infer<typeof gradeRefSchema>;
+
+export interface CourseModule {
+  id: number;
+  name: string;
+  lessons: number;
+  duration: string;
+  price: number;
+}
+
+export interface Review {
+  id: string | number;
+  author: string;
+  date: string;
+  rating: number;
+  content: string;
+}
